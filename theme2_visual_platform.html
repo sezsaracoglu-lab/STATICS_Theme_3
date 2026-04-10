@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme 2 · Visual Statistics Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0e0c;--bg2:#181714;--bg3:#201e1a;--bg4:#2a2722;
+  --gold:#c9a96e;--gold-dim:#8a6b3a;--gold-bright:#e8c87e;
+  --text:#ede6d8;--dim:#8a8070;--muted:#4a4538;
+  --r:14px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;overflow:hidden;}
+.app{display:flex;height:100vh;}
+
+/* SIDEBAR */
+.sb{width:72px;background:var(--bg2);border-right:1px solid rgba(201,169,110,.1);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:4px;overflow-y:auto;flex-shrink:0;}
+.sb-logo{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#0f0e0c;margin-bottom:10px;flex-shrink:0;}
+.sb-btn{width:52px;height:52px;border-radius:10px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all .2s;color:var(--dim);font-size:10px;text-align:center;padding:6px 4px;}
+.sb-btn .ic{font-size:20px;line-height:1;}
+.sb-btn:hover{background:rgba(201,169,110,.1);color:var(--gold);}
+.sb-btn.active{background:rgba(201,169,110,.15);color:var(--gold-bright);}
+.sb-sep{width:32px;height:1px;background:rgba(201,169,110,.12);margin:6px 0;flex-shrink:0;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:52px;border-bottom:1px solid rgba(201,169,110,.1);display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0;}
+.tb-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);font-style:italic;}
+.tb-sub{font-size:11px;color:var(--dim);}
+.tb-badge{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid;margin-left:auto;}
+.view-area{flex:1;overflow:hidden;position:relative;}
+
+/* VIEWS */
+.view{display:none;height:100%;overflow-y:auto;animation:fi .3s ease;}
+.view.active{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── OVERVIEW ── */
+.overview-wrap{padding:28px;}
+.ov-head{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;background:linear-gradient(90deg,var(--gold-bright),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.ov-sub{color:var(--dim);font-size:13px;margin-bottom:28px;}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+.ov-card{background:var(--bg3);border-radius:var(--r);border:1px solid rgba(255,255,255,.06);padding:16px;cursor:pointer;transition:all .22s;overflow:hidden;position:relative;}
+.ov-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.5);}
+.ov-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0;}
+.ov-num{font-size:11px;letter-spacing:.1em;color:var(--dim);margin-bottom:6px;}
+.ov-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;line-height:1.3;margin-bottom:8px;}
+.ov-mini{width:100%;height:80px;display:block;}
+
+/* ── LESSON VIEW ── */
+.lesson-wrap{height:100%;display:flex;flex-direction:column;}
+.lesson-nav{display:flex;align-items:center;gap:12px;padding:14px 24px 0;flex-shrink:0;}
+.lesson-nav-title{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--dim);}
+.lesson-pills{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.lesson-pill{padding:4px 11px;border-radius:99px;font-size:11px;font-weight:500;border:1px solid rgba(255,255,255,.08);background:none;cursor:pointer;color:var(--dim);transition:all .18s;font-family:'DM Sans',sans-serif;}
+.lesson-pill:hover{border-color:var(--gold-dim);color:var(--gold);}
+.lesson-pill.active{background:rgba(201,169,110,.18);border-color:var(--gold);color:var(--gold-bright);}
+.lesson-body{flex:1;overflow:hidden;display:flex;flex-direction:column;padding:14px 24px 0;}
+.lesson-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-shrink:0;}
+.lesson-num-badge{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+.lesson-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;line-height:1.1;}
+.lesson-topic-tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.65;margin-top:2px;}
+.lesson-content{flex:1;overflow:hidden;display:grid;gap:20px;}
+.lesson-content.layout-left{grid-template-columns:1fr 340px;}
+.lesson-content.layout-top{grid-template-rows:1fr auto;}
+.lesson-content.layout-full{grid-template-columns:1fr;}
+.diagram-panel{background:var(--bg2);border-radius:var(--r);border:1px solid rgba(255,255,255,.07);overflow:hidden;display:flex;align-items:center;justify-content:center;padding:16px;}
+.diagram-panel svg{width:100%;height:100%;max-height:100%;}
+.notes-panel{background:var(--bg3);border-radius:var(--r);border:1px solid rgba(255,255,255,.06);padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+.note-block{display:flex;gap:10px;}
+.note-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.note-text{font-size:13px;line-height:1.65;color:var(--text);}
+.note-text strong{font-weight:600;}
+.note-text em{color:var(--dim);}
+.mem-hook{background:rgba(201,169,110,.08);border:1px solid rgba(201,169,110,.22);border-radius:var(--rs);padding:10px 14px;font-size:12px;color:var(--gold-bright);line-height:1.5;}
+.mem-hook::before{content:'💡 ';}
+.warn-hook{background:rgba(220,80,80,.07);border:1px solid rgba(220,80,80,.2);border-radius:var(--rs);padding:10px 14px;font-size:12px;color:#ff9090;line-height:1.5;}
+.warn-hook::before{content:'⚠️ ';}
+.lesson-footer{display:flex;align-items:center;gap:12px;padding:12px 24px 14px;border-top:1px solid rgba(255,255,255,.05);flex-shrink:0;}
+.lf-btn{padding:8px 20px;border-radius:var(--rs);border:1px solid rgba(201,169,110,.25);background:none;color:var(--dim);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;transition:all .2s;}
+.lf-btn:hover{background:rgba(201,169,110,.1);color:var(--gold);}
+.lf-btn.primary{background:rgba(201,169,110,.15);color:var(--gold-bright);border-color:var(--gold);}
+.lf-progress{flex:1;text-align:center;font-size:11px;color:var(--dim);}
+.lf-dots{display:flex;gap:5px;justify-content:center;}
+.lf-dot{width:7px;height:7px;border-radius:50%;background:var(--bg4);transition:all .2s;}
+.lf-dot.done{background:var(--gold-dim);}
+.lf-dot.now{background:var(--gold);}
+
+/* ── FLASHCARDS ── */
+.fc-view{padding:24px;display:flex;flex-direction:column;height:100%;}
+.fc-top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
+.fc-top button{padding:6px 14px;border-radius:99px;border:1px solid rgba(201,169,110,.2);background:none;color:var(--dim);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;transition:all .18s;}
+.fc-top button:hover{border-color:var(--gold);color:var(--gold);}
+.fc-top button.active{background:rgba(201,169,110,.15);color:var(--gold-bright);border-color:var(--gold);}
+.fc-arena{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.fc-wrap{perspective:1200px;width:100%;max-width:580px;height:280px;cursor:pointer;margin-bottom:18px;}
+.fc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1);}
+.fc-inner.flipped{transform:rotateY(180deg);}
+.fc-face{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:28px 36px;text-align:center;}
+.fc-front{background:var(--bg2);border:1px solid rgba(255,255,255,.08);}
+.fc-back{background:var(--bg3);transform:rotateY(180deg);}
+.fc-qlabel{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:14px;}
+.fc-qtext{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;line-height:1.4;max-width:480px;}
+.fc-atext{font-size:13px;line-height:1.7;max-width:480px;}
+.fc-hint{font-size:10px;color:var(--muted);margin-top:12px;}
+.fc-nav{display:flex;align-items:center;gap:14px;}
+.fc-nav-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(201,169,110,.2);background:none;color:var(--dim);cursor:pointer;font-size:20px;line-height:1;transition:all .2s;}
+.fc-nav-btn:hover{background:rgba(201,169,110,.12);color:var(--gold);}
+.fc-dots-row{display:flex;gap:5px;flex-wrap:wrap;max-width:340px;justify-content:center;}
+.fcdot{width:7px;height:7px;border-radius:50%;background:var(--bg4);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:all .18s;}
+.fcdot.cur{background:var(--gold);}
+.fcdot.seen{background:var(--gold-dim);}
+.fc-count{font-size:12px;color:var(--dim);margin-left:auto;}
+
+/* ── MCQ ── */
+.mcq-view{padding:24px;overflow-y:auto;height:100%;}
+.mcq-score-row{display:flex;align-items:center;gap:14px;background:var(--bg3);border:1px solid rgba(201,169,110,.15);border-radius:var(--r);padding:14px 20px;margin-bottom:22px;}
+.mcq-score-big{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:700;color:var(--gold);line-height:1;}
+.mcq-score-info{font-size:12px;color:var(--dim);}
+.mcq-reset{margin-left:auto;padding:7px 16px;border-radius:var(--rs);border:1px solid rgba(201,169,110,.2);background:none;color:var(--gold);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;}
+.mcq-grid{display:grid;gap:16px;}
+.mcq-card{background:var(--bg2);border-radius:var(--r);border:1px solid rgba(255,255,255,.06);padding:18px 20px;}
+.mcq-tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;}
+.mcq-q{font-size:14px;font-weight:500;line-height:1.5;margin-bottom:12px;}
+.mcq-opts{display:flex;flex-direction:column;gap:7px;}
+.mcq-opt{padding:9px 13px;border-radius:var(--rs);border:1px solid rgba(255,255,255,.07);background:none;color:var(--text);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.4;transition:all .18s;}
+.mcq-opt:hover:not(:disabled){border-color:var(--gold-dim);background:rgba(201,169,110,.06);}
+.mcq-opt.correct{border-color:#5db865;background:rgba(93,184,101,.1);color:#90e898;}
+.mcq-opt.correct::before{content:'✓  ';}
+.mcq-opt.wrong{border-color:#d96060;background:rgba(217,96,96,.08);color:#ff9898;}
+.mcq-opt.wrong::before{content:'✗  ';}
+.mcq-fb{font-size:12px;line-height:1.6;margin-top:8px;padding:9px 13px;border-radius:var(--rs);display:none;}
+.mcq-fb.show{display:block;}
+.mcq-fb.c{background:rgba(93,184,101,.07);border:1px solid rgba(93,184,101,.2);color:#90e898;}
+.mcq-fb.w{background:rgba(217,96,96,.07);border:1px solid rgba(217,96,96,.2);color:#ff9898;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(201,169,110,.2);border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sb" id="sb">
+  <div class="sb-logo">σ</div>
+  <div class="sb-sep"></div>
+  <button class="sb-btn active" id="btn-overview" onclick="setView('overview',this)" title="Overview"><span class="ic">🗺</span>Map</button>
+  <button class="sb-btn" id="btn-lesson" onclick="setView('lesson',this)" title="Lessons"><span class="ic">📖</span>Lesson</button>
+  <button class="sb-btn" id="btn-fc" onclick="setView('fc',this)" title="Flashcards"><span class="ic">🃏</span>Cards</button>
+  <button class="sb-btn" id="btn-mcq" onclick="setView('mcq',this)" title="MCQ"><span class="ic">✏️</span>MCQ</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <span class="tb-title">Statistics — Theme 2</span>
+    <span class="tb-sub">EUR International Psychology · Visual Study Platform</span>
+    <span class="tb-badge" id="tb-badge" style="border-color:var(--gold);color:var(--gold)">Overview</span>
+  </div>
+  <div class="view-area">
+
+    <!-- OVERVIEW -->
+    <div class="view active" id="view-overview">
+      <div class="overview-wrap">
+        <div class="ov-head">Statistics Theme 2</div>
+        <div class="ov-sub">Select a lesson to start · Each lesson contains a visual diagram + key points · All 31 pages covered</div>
+        <div class="ov-grid" id="ov-grid"></div>
+      </div>
+    </div>
+
+    <!-- LESSON -->
+    <div class="view" id="view-lesson">
+      <div class="lesson-wrap">
+        <div class="lesson-nav">
+          <span class="lesson-nav-title">Jump to:</span>
+          <div class="lesson-pills" id="lesson-pills"></div>
+        </div>
+        <div class="lesson-body">
+          <div class="lesson-header">
+            <div class="lesson-num-badge" id="l-badge">1</div>
+            <div>
+              <div class="lesson-title" id="l-title">Loading</div>
+              <div class="lesson-topic-tag" id="l-tag">Topic</div>
+            </div>
+          </div>
+          <div class="lesson-content layout-left" id="l-content">
+            <div class="diagram-panel" id="l-diagram"></div>
+            <div class="notes-panel" id="l-notes"></div>
+          </div>
+        </div>
+        <div class="lesson-footer">
+          <button class="lf-btn" onclick="moveLesson(-1)">← Previous</button>
+          <div class="lf-progress">
+            <div class="lf-dots" id="lf-dots"></div>
+          </div>
+          <button class="lf-btn primary" onclick="moveLesson(1)">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLASHCARDS -->
+    <div class="view" id="view-fc">
+      <div class="fc-view">
+        <div class="fc-top">
+          <button onclick="fcFilter('all')" class="active" id="fc-btn-all">All Topics</button>
+          <button onclick="fcFilter('t1')">Data</button>
+          <button onclick="fcFilter('t2')">Variables</button>
+          <button onclick="fcFilter('t3')">Research</button>
+          <button onclick="fcFilter('t4')">Measurement</button>
+          <button onclick="fcFilter('t5')">ARV</button>
+          <button onclick="fcFilter('t6')">Graphs</button>
+          <button onclick="fcFilter('t7')">Stats</button>
+          <button onclick="fcFilter('t8')">Linear</button>
+          <button onclick="fcFilter('t9')">Normal</button>
+          <button onclick="fcFilter('t10')">Z-Score</button>
+          <button onclick="fcFilter('t11')">QQ</button>
+          <button onclick="fcShuffle()">🔀 Shuffle</button>
+          <button onclick="fcReset()">↺ Reset</button>
+          <span class="fc-count" id="fc-count">1 / 41</span>
+        </div>
+        <div class="fc-arena">
+          <div class="fc-wrap" onclick="fcFlip()">
+            <div class="fc-inner" id="fc-inner">
+              <div class="fc-face fc-front" id="fc-front">
+                <div class="fc-qlabel">Question</div>
+                <div class="fc-qtext" id="fc-q">Loading...</div>
+                <div class="fc-hint">Tap to reveal answer</div>
+              </div>
+              <div class="fc-face fc-back" id="fc-back">
+                <div class="fc-qlabel">Answer</div>
+                <div class="fc-atext" id="fc-a">...</div>
+              </div>
+            </div>
+          </div>
+          <div class="fc-nav">
+            <button class="fc-nav-btn" onclick="fcMove(-1)">‹</button>
+            <div class="fc-dots-row" id="fc-dotrow"></div>
+            <button class="fc-nav-btn" onclick="fcMove(1)">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MCQ -->
+    <div class="view" id="view-mcq">
+      <div class="mcq-view">
+        <div class="mcq-score-row">
+          <div class="mcq-score-big" id="mcq-big">0</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)" id="mcq-answered">/ 0 answered</div><div class="mcq-score-info" id="mcq-pct">Click an answer to start</div></div>
+          <button class="mcq-reset" onclick="mcqReset()">↺ Reset</button>
+        </div>
+        <div class="mcq-grid" id="mcq-grid"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// TOPIC CONFIG
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const TC={
+  t1:{c:'#8b7fd4',n:'Data Fundamentals'},  t2:{c:'#5a9fd4',n:'Variable Types'},
+  t3:{c:'#6dbe6d',n:'Research Variables'}, t4:{c:'#c9a96e',n:'Measurement'},
+  t5:{c:'#e06868',n:'Reliability & Validity'}, t6:{c:'#f09050',n:'Graphical Displays'},
+  t7:{c:'#45c5c5',n:'Center & Spread'},    t8:{c:'#d4b020',n:'Linear Transformation'},
+  t9:{c:'#d480b8',n:'Normal Distribution'},t10:{c:'#70aed4',n:'Z-Scores'},
+  t11:{c:'#a882d4',n:'Q-Q Plot & Frequencies'}
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// LESSON DATA — each lesson has a big SVG diagram + key points
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const LESSONS=[
+
+{id:'L0',topic:'t1',title:'What is Statistics?',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <text x="260" y="28" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="17" fill="#c9a96e" font-weight="700">Statistics always asks ONE question:</text>
+  <rect x="110" y="38" width="300" height="42" rx="10" fill="rgba(201,169,110,.15)" stroke="#c9a96e" stroke-width="1.5"/>
+  <text x="260" y="64" text-anchor="middle" font-size="15" fill="#e8c87e" font-weight="600">"What do my data look like?"</text>
+  <!-- 5 sub-questions as bubbles -->
+  <line x1="260" y1="80" x2="100" y2="126" stroke="#8b7fd4" stroke-width="1.2" opacity=".6"/>
+  <line x1="260" y1="80" x2="190" y2="140" stroke="#5a9fd4" stroke-width="1.2" opacity=".6"/>
+  <line x1="260" y1="80" x2="260" y2="140" stroke="#6dbe6d" stroke-width="1.2" opacity=".6"/>
+  <line x1="260" y1="80" x2="330" y2="140" stroke="#f09050" stroke-width="1.2" opacity=".6"/>
+  <line x1="260" y1="80" x2="420" y2="126" stroke="#d480b8" stroke-width="1.2" opacity=".6"/>
+  <rect x="30" y="126" width="140" height="36" rx="8" fill="rgba(139,127,212,.15)" stroke="#8b7fd4" stroke-width="1"/>
+  <text x="100" y="148" text-anchor="middle" font-size="11.5" fill="#b8aeee">What KIND of data?</text>
+  <rect x="130" y="140" width="120" height="36" rx="8" fill="rgba(90,159,212,.15)" stroke="#5a9fd4" stroke-width="1"/>
+  <text x="190" y="162" text-anchor="middle" font-size="11.5" fill="#90c4ee">How SPREAD OUT?</text>
+  <rect x="195" y="140" width="130" height="36" rx="8" fill="rgba(109,190,109,.15)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="260" y="162" text-anchor="middle" font-size="11.5" fill="#99d499">Where is the MIDDLE?</text>
+  <rect x="270" y="140" width="120" height="36" rx="8" fill="rgba(240,144,80,.15)" stroke="#f09050" stroke-width="1"/>
+  <text x="330" y="156" text-anchor="middle" font-size="11" fill="#f0b080">Any STRANGE</text>
+  <text x="330" y="170" text-anchor="middle" font-size="11" fill="#f0b080">values?</text>
+  <rect x="350" y="126" width="140" height="36" rx="8" fill="rgba(212,128,184,.15)" stroke="#d480b8" stroke-width="1"/>
+  <text x="420" y="148" text-anchor="middle" font-size="11.5" fill="#e8a0d0">Does it look NORMAL?</text>
+  <!-- EDA vs Predictive -->
+  <line x1="100" y1="220" x2="420" y2="220" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+  <text x="260" y="210" text-anchor="middle" font-size="11" fill="#4a4538" letter-spacing=".08em">TWO APPROACHES</text>
+  <rect x="30" y="228" width="200" height="100" rx="10" fill="rgba(109,190,109,.08)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="130" y="250" text-anchor="middle" font-size="13" fill="#6dbe6d" font-weight="600">EDA</text>
+  <text x="130" y="264" text-anchor="middle" font-size="10.5" fill="#8a8070">Exploratory Data Analysis</text>
+  <text x="130" y="282" text-anchor="middle" font-size="11" fill="#ede6d8">Graphs + Summaries</text>
+  <text x="130" y="298" text-anchor="middle" font-size="11" fill="#ede6d8">DISCOVER patterns</text>
+  <text x="130" y="314" text-anchor="middle" font-size="11" fill="#c9a96e">Goal: UNDERSTAND data</text>
+  <rect x="290" y="228" width="200" height="100" rx="10" fill="rgba(212,128,184,.08)" stroke="#d480b8" stroke-width="1"/>
+  <text x="390" y="250" text-anchor="middle" font-size="13" fill="#d480b8" font-weight="600">Predictive Analysis</text>
+  <text x="390" y="264" text-anchor="middle" font-size="10.5" fill="#8a8070">Statistical Models</text>
+  <text x="390" y="282" text-anchor="middle" font-size="11" fill="#ede6d8">Regression, etc.</text>
+  <text x="390" y="298" text-anchor="middle" font-size="11" fill="#ede6d8">FORECAST outcomes</text>
+  <text x="390" y="314" text-anchor="middle" font-size="11" fill="#c9a96e">Goal: PREDICT Y from X</text>
+</svg>`,
+points:[
+  {t:'A <strong>case</strong> = who or what is described (a person, company, student).'},
+  {t:'A <strong>variable</strong> = the characteristic we measure (age, score, diagnosis).'},
+  {t:'A <strong>value</strong> = the actual recorded result for one case (age = 21).'},
+  {t:'A <strong>label variable</strong> = identification only (ID, number). <em>Never analyzed.</em>'},
+  {t:'EDA = understand data first. Predictive = forecast outcomes.'},
+],mem:'Numbers without context are meaningless in statistics.'},
+
+{id:'L1',topic:'t2',title:'Variable Types — Decision Tree',
+layout:'left',
+svg:`<svg viewBox="0 0 520 360" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- Root question -->
+  <rect x="155" y="8" width="210" height="40" rx="10" fill="rgba(201,169,110,.2)" stroke="#c9a96e" stroke-width="1.5"/>
+  <text x="260" y="23" text-anchor="middle" font-size="11" fill="#c9a96e" font-weight="600">Is this a CATEGORY or a NUMBER?</text>
+  <text x="260" y="38" text-anchor="middle" font-size="10" fill="#8a8070">"Can I calculate an average?"</text>
+  <!-- Branches -->
+  <line x1="200" y1="48" x2="110" y2="96" stroke="#8b7fd4" stroke-width="1.5"/>
+  <line x1="320" y1="48" x2="410" y2="96" stroke="#5a9fd4" stroke-width="1.5"/>
+  <text x="140" y="80" text-anchor="middle" font-size="10" fill="#8b7fd4">NO → Category</text>
+  <text x="380" y="80" text-anchor="middle" font-size="10" fill="#5a9fd4">YES → Number</text>
+  <!-- CATEGORICAL -->
+  <rect x="20" y="96" width="180" height="36" rx="9" fill="rgba(139,127,212,.2)" stroke="#8b7fd4" stroke-width="1.5"/>
+  <text x="110" y="119" text-anchor="middle" font-size="13" fill="#b8aeee" font-weight="600">CATEGORICAL</text>
+  <line x1="70" y1="132" x2="50" y2="172" stroke="#8b7fd4" stroke-width="1.2"/>
+  <line x1="150" y1="132" x2="170" y2="172" stroke="#8b7fd4" stroke-width="1.2"/>
+  <text x="50" y="162" text-anchor="middle" font-size="10" fill="#8b7fd4">No order</text>
+  <text x="170" y="162" text-anchor="middle" font-size="10" fill="#8b7fd4">Has order</text>
+  <!-- Nominal box -->
+  <rect x="0" y="172" width="105" height="74" rx="8" fill="rgba(139,127,212,.12)" stroke="#8b7fd4" stroke-width="1"/>
+  <text x="52" y="191" text-anchor="middle" font-size="13" fill="#b8aeee" font-weight="700">NOMINAL</text>
+  <text x="52" y="208" text-anchor="middle" font-size="10" fill="#8a8070">Categories with</text>
+  <text x="52" y="220" text-anchor="middle" font-size="10" fill="#8a8070">NO ranking</text>
+  <text x="52" y="234" text-anchor="middle" font-size="10" fill="#ede6d8">Gender · Blood type</text>
+  <!-- Ordinal box -->
+  <rect x="113" y="172" width="105" height="74" rx="8" fill="rgba(139,127,212,.12)" stroke="#8b7fd4" stroke-width="1"/>
+  <text x="165" y="191" text-anchor="middle" font-size="13" fill="#b8aeee" font-weight="700">ORDINAL</text>
+  <text x="165" y="208" text-anchor="middle" font-size="10" fill="#8a8070">Has order BUT</text>
+  <text x="165" y="220" text-anchor="middle" font-size="10" fill="#8a8070">unequal gaps</text>
+  <text x="165" y="234" text-anchor="middle" font-size="10" fill="#ede6d8">Pain level · Satisfaction</text>
+  <!-- NUMERICAL -->
+  <rect x="320" y="96" width="180" height="36" rx="9" fill="rgba(90,159,212,.2)" stroke="#5a9fd4" stroke-width="1.5"/>
+  <text x="410" y="119" text-anchor="middle" font-size="13" fill="#90c4ee" font-weight="600">NUMERICAL</text>
+  <line x1="360" y1="132" x2="340" y2="172" stroke="#5a9fd4" stroke-width="1.2"/>
+  <line x1="460" y1="132" x2="480" y2="172" stroke="#5a9fd4" stroke-width="1.2"/>
+  <text x="330" y="162" text-anchor="middle" font-size="10" fill="#5a9fd4">Counting</text>
+  <text x="488" y="162" text-anchor="middle" font-size="10" fill="#5a9fd4">Measuring</text>
+  <!-- Discrete box -->
+  <rect x="295" y="172" width="100" height="84" rx="8" fill="rgba(90,159,212,.12)" stroke="#5a9fd4" stroke-width="1"/>
+  <text x="345" y="191" text-anchor="middle" font-size="13" fill="#90c4ee" font-weight="700">DISCRETE</text>
+  <text x="345" y="208" text-anchor="middle" font-size="10" fill="#8a8070">Whole numbers</text>
+  <text x="345" y="220" text-anchor="middle" font-size="10" fill="#8a8070">only, no decimals</text>
+  <text x="345" y="234" text-anchor="middle" font-size="10" fill="#ede6d8">No. of children</text>
+  <text x="345" y="248" text-anchor="middle" font-size="10" fill="#ede6d8">Goals scored</text>
+  <!-- Continuous sub-tree -->
+  <rect x="410" y="172" width="105" height="36" rx="8" fill="rgba(90,159,212,.15)" stroke="#5a9fd4" stroke-width="1"/>
+  <text x="462" y="187" text-anchor="middle" font-size="11" fill="#90c4ee" font-weight="600">CONTINUOUS</text>
+  <text x="462" y="200" text-anchor="middle" font-size="9" fill="#8a8070">Decimals possible</text>
+  <line x1="440" y1="208" x2="420" y2="244" stroke="#5a9fd4" stroke-width="1.2"/>
+  <line x1="484" y1="208" x2="504" y2="244" stroke="#5a9fd4" stroke-width="1.2"/>
+  <text x="410" y="238" text-anchor="middle" font-size="9.5" fill="#5a9fd4">Arbitrary 0</text>
+  <text x="515" y="238" text-anchor="middle" font-size="9.5" fill="#5a9fd4">True 0</text>
+  <!-- Interval -->
+  <rect x="382" y="244" width="86" height="74" rx="8" fill="rgba(90,159,212,.1)" stroke="#5a9fd4" stroke-width="1"/>
+  <text x="425" y="263" text-anchor="middle" font-size="12" fill="#90c4ee" font-weight="700">INTERVAL</text>
+  <text x="425" y="278" text-anchor="middle" font-size="9.5" fill="#8a8070">0 is arbitrary</text>
+  <text x="425" y="291" text-anchor="middle" font-size="9.5" fill="#ede6d8">Temp °C · IQ</text>
+  <text x="425" y="305" text-anchor="middle" font-size="9" fill="#f09050">≠ "none"</text>
+  <text x="425" y="317" text-anchor="middle" font-size="9" fill="#f09050">Can't ratio</text>
+  <!-- Ratio -->
+  <rect x="474" y="244" width="86" height="74" rx="8" fill="rgba(90,159,212,.1)" stroke="#5a9fd4" stroke-width="1"/>
+  <text x="517" y="263" text-anchor="middle" font-size="12" fill="#90c4ee" font-weight="700">RATIO</text>
+  <text x="517" y="278" text-anchor="middle" font-size="9.5" fill="#8a8070">0 = none</text>
+  <text x="517" y="291" text-anchor="middle" font-size="9.5" fill="#ede6d8">Height · Weight</text>
+  <text x="517" y="305" text-anchor="middle" font-size="9" fill="#6dbe6d">= "none"</text>
+  <text x="517" y="317" text-anchor="middle" font-size="9" fill="#6dbe6d">CAN ratio</text>
+</svg>`,
+points:[
+  {t:'<strong>Nominal</strong>: categories with NO order. You COUNT, never calculate. <em>Blood type, gender, nationality.</em>'},
+  {t:'<strong>Ordinal</strong>: categories WITH order, but gaps are UNEQUAL. <em>Pain: mild < moderate < severe — but "moderate" ≠ exactly 2× mild.</em>'},
+  {t:'<strong>Discrete</strong>: counting → whole numbers only. <em>"You cannot have 2.5 children."</em>'},
+  {t:'<strong>Interval</strong>: continuous, equal gaps, but zero is ARBITRARY. <em>0°C ≠ "no temperature" → cannot say 20°C is twice 10°C.</em>'},
+  {t:'<strong>Ratio</strong>: continuous, equal gaps, TRUE zero. <em>0 kg = no weight → 20 kg IS twice 10 kg.</em>'},
+],mem:'"Can I calculate a meaningful average?" → Yes = Numerical. No = Categorical.'},
+
+{id:'L2',topic:'t3',title:'IV, DV, Situational & Subject Variables',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- IV → DV arrow -->
+  <rect x="20" y="30" width="160" height="70" rx="10" fill="rgba(109,190,109,.15)" stroke="#6dbe6d" stroke-width="1.5"/>
+  <text x="100" y="56" text-anchor="middle" font-size="14" fill="#6dbe6d" font-weight="700">Independent Variable</text>
+  <text x="100" y="73" text-anchor="middle" font-size="11" fill="#8a8070">(IV / Explanatory)</text>
+  <text x="100" y="89" text-anchor="middle" font-size="11" fill="#ede6d8">X-axis · CAUSE · "What</text>
+  <text x="100" y="100" text-anchor="middle" font-size="11" fill="#ede6d8">we manipulate/measure"</text>
+  <text x="192" y="68" text-anchor="middle" font-size="24" fill="#c9a96e">→</text>
+  <text x="192" y="82" text-anchor="middle" font-size="9" fill="#c9a96e">predicts</text>
+  <rect x="220" y="30" width="160" height="70" rx="10" fill="rgba(224,104,104,.12)" stroke="#e06868" stroke-width="1.5"/>
+  <text x="300" y="56" text-anchor="middle" font-size="14" fill="#e06868" font-weight="700">Dependent Variable</text>
+  <text x="300" y="73" text-anchor="middle" font-size="11" fill="#8a8070">(DV / Response)</text>
+  <text x="300" y="89" text-anchor="middle" font-size="11" fill="#ede6d8">Y-axis · EFFECT · "What</text>
+  <text x="300" y="100" text-anchor="middle" font-size="11" fill="#ede6d8">we measure as outcome"</text>
+  <text x="440" y="38" text-anchor="start" font-size="11" fill="#8a8070">Example:</text>
+  <text x="440" y="54" text-anchor="start" font-size="11" fill="#6dbe6d">Hours studied</text>
+  <text x="440" y="68" text-anchor="start" font-size="12" fill="#c9a96e">→</text>
+  <text x="450" y="68" text-anchor="start" font-size="11" fill="#e06868">Exam score</text>
+  <!-- Divider -->
+  <line x1="20" y1="118" x2="500" y2="118" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+  <text x="260" y="136" text-anchor="middle" font-size="11" fill="#4a4538" letter-spacing=".1em">TWO SPECIAL VARIABLE TYPES</text>
+  <!-- Situational -->
+  <rect x="20" y="148" width="220" height="168" rx="12" fill="rgba(201,169,110,.08)" stroke="#c9a96e" stroke-width="1"/>
+  <text x="130" y="172" text-anchor="middle" font-size="14" fill="#c9a96e" font-weight="700">Situational Variable</text>
+  <text x="130" y="190" text-anchor="middle" font-size="11" fill="#8a8070">"What situation was placed IN?"</text>
+  <!-- Environment box visual -->
+  <rect x="40" y="200" width="80" height="60" rx="6" fill="rgba(201,169,110,.08)" stroke="rgba(201,169,110,.3)" stroke-width="1"/>
+  <text x="80" y="224" text-anchor="middle" font-size="24">🏫</text>
+  <text x="80" y="252" text-anchor="middle" font-size="10" fill="#8a8070">online class</text>
+  <rect x="140" y="200" width="80" height="60" rx="6" fill="rgba(201,169,110,.08)" stroke="rgba(201,169,110,.3)" stroke-width="1"/>
+  <text x="180" y="224" text-anchor="middle" font-size="24">🔇</text>
+  <text x="180" y="252" text-anchor="middle" font-size="10" fill="#8a8070">quiet room</text>
+  <text x="130" y="280" text-anchor="middle" font-size="11" fill="#ede6d8">Can be manipulated/assigned</text>
+  <text x="130" y="295" text-anchor="middle" font-size="11" fill="#ede6d8">Common in EXPERIMENTS</text>
+  <text x="130" y="310" text-anchor="middle" font-size="10.5" fill="#c9a96e">Examples: room type, noise level</text>
+  <!-- Subject -->
+  <rect x="260" y="148" width="220" height="168" rx="12" fill="rgba(109,190,109,.07)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="370" y="172" text-anchor="middle" font-size="14" fill="#6dbe6d" font-weight="700">Subject Variable</text>
+  <text x="370" y="190" text-anchor="middle" font-size="11" fill="#8a8070">"Who the person already IS?"</text>
+  <!-- Person icons -->
+  <text x="310" y="235" text-anchor="middle" font-size="32">👩</text>
+  <text x="310" y="255" text-anchor="middle" font-size="10" fill="#8a8070">Person A</text>
+  <text x="430" y="235" text-anchor="middle" font-size="32">👨</text>
+  <text x="430" y="255" text-anchor="middle" font-size="10" fill="#8a8070">Person B</text>
+  <text x="370" y="280" text-anchor="middle" font-size="11" fill="#ede6d8">CANNOT be assigned/manipulated</text>
+  <text x="370" y="295" text-anchor="middle" font-size="11" fill="#ede6d8">Pre-existing characteristic</text>
+  <text x="370" y="310" text-anchor="middle" font-size="10.5" fill="#6dbe6d">Examples: age, gender, nationality</text>
+</svg>`,
+points:[
+  {t:'<strong>IV</strong> = the cause/explanatory variable → plotted on X-axis. We think it predicts the DV.'},
+  {t:'<strong>DV</strong> = the effect/response variable → plotted on Y-axis. It responds to changes in the IV.'},
+  {t:'<strong>Situational</strong> = environment the participant is placed IN. Can be manipulated. Used in experiments.'},
+  {t:'<strong>Subject</strong> = pre-existing characteristic (age, gender). CANNOT be assigned. Only measured.'},
+],mem:'IV → X-axis → CAUSE. DV → Y-axis → EFFECT. Situational = context. Subject = who they already are.',
+warn:'With subject variables, you CANNOT claim causation — only association.'},
+
+{id:'L3',topic:'t3',title:'Mediator vs Moderator',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <text x="260" y="20" text-anchor="middle" font-size="12" fill="#4a4538" letter-spacing=".08em">MEDIATOR = WHY?   |   MODERATOR = WHEN / FOR WHOM?</text>
+  <!-- MEDIATOR -->
+  <rect x="10" y="30" width="240" height="280" rx="12" fill="rgba(109,190,109,.07)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="130" y="52" text-anchor="middle" font-size="14" fill="#6dbe6d" font-weight="700">MEDIATOR</text>
+  <text x="130" y="68" text-anchor="middle" font-size="11" fill="#8a8070">Explains HOW / WHY X affects Y</text>
+  <!-- Path diagram: X → M → Y -->
+  <rect x="28" y="88" width="64" height="34" rx="7" fill="rgba(109,190,109,.15)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="60" y="110" text-anchor="middle" font-size="12" fill="#6dbe6d" font-weight="600">X</text>
+  <line x1="92" y1="105" x2="112" y2="105" stroke="#c9a96e" stroke-width="1.5"/>
+  <text x="102" y="99" text-anchor="middle" font-size="9" fill="#c9a96e">a</text>
+  <rect x="112" y="88" width="64" height="34" rx="7" fill="rgba(201,169,110,.15)" stroke="#c9a96e" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="144" y="104" text-anchor="middle" font-size="11" fill="#e8c87e" font-weight="700">MEDIATOR</text>
+  <text x="144" y="116" text-anchor="middle" font-size="9.5" fill="#c9a96e">(M)</text>
+  <line x1="176" y1="105" x2="196" y2="105" stroke="#c9a96e" stroke-width="1.5"/>
+  <text x="186" y="99" text-anchor="middle" font-size="9" fill="#c9a96e">b</text>
+  <rect x="196" y="88" width="42" height="34" rx="7" fill="rgba(224,104,104,.15)" stroke="#e06868" stroke-width="1"/>
+  <text x="217" y="110" text-anchor="middle" font-size="12" fill="#e06868" font-weight="600">Y</text>
+  <!-- Direct arrow X→Y (c') -->
+  <path d="M60,122 Q130,148 217,122" fill="none" stroke="#8b7fd4" stroke-width="1.2" stroke-dasharray="5,3"/>
+  <text x="138" y="146" text-anchor="middle" font-size="9" fill="#8b7fd4">c' (direct, reduced)</text>
+  <!-- Real example -->
+  <rect x="24" y="165" width="204" height="130" rx="8" fill="rgba(0,0,0,.2)"/>
+  <text x="126" y="183" text-anchor="middle" font-size="11" fill="#6dbe6d" font-weight="600">Real example:</text>
+  <rect x="32" y="190" width="60" height="28" rx="6" fill="rgba(109,190,109,.15)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="62" y="208" text-anchor="middle" font-size="10" fill="#6dbe6d">Study time</text>
+  <text x="100" y="208" text-anchor="middle" font-size="14" fill="#c9a96e">→</text>
+  <rect x="108" y="190" width="72" height="28" rx="6" fill="rgba(201,169,110,.15)" stroke="#c9a96e" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="144" y="204" text-anchor="middle" font-size="10" fill="#e8c87e">Under-</text>
+  <text x="144" y="214" text-anchor="middle" font-size="10" fill="#e8c87e">standing</text>
+  <text x="192" y="208" text-anchor="middle" font-size="14" fill="#c9a96e">→</text>
+  <rect x="198" y="190" width="22" height="28" rx="5" fill="rgba(224,104,104,.15)" stroke="#e06868" stroke-width="1"/>
+  <text x="209" y="208" text-anchor="middle" font-size="10" fill="#e06868">Y</text>
+  <text x="126" y="244" text-anchor="middle" font-size="10.5" fill="#8a8070">Exam language:</text>
+  <text x="126" y="260" text-anchor="middle" font-size="10.5" fill="#ede6d8">"Understanding MEDIATES</text>
+  <text x="126" y="274" text-anchor="middle" font-size="10.5" fill="#ede6d8">the relationship between</text>
+  <text x="126" y="288" text-anchor="middle" font-size="10.5" fill="#ede6d8">study time and exam score"</text>
+  <!-- MODERATOR -->
+  <rect x="270" y="30" width="240" height="280" rx="12" fill="rgba(212,176,32,.07)" stroke="#d4b020" stroke-width="1"/>
+  <text x="390" y="52" text-anchor="middle" font-size="14" fill="#d4b020" font-weight="700">MODERATOR</text>
+  <text x="390" y="68" text-anchor="middle" font-size="11" fill="#8a8070">Changes STRENGTH of X → Y</text>
+  <!-- Path diagram with W from above -->
+  <rect x="284" y="108" width="64" height="34" rx="7" fill="rgba(109,190,109,.15)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="316" y="130" text-anchor="middle" font-size="12" fill="#6dbe6d" font-weight="600">X</text>
+  <line x1="348" y1="125" x2="456" y2="125" stroke="#e06868" stroke-width="2.5" marker-end="url(#arr)"/>
+  <rect x="456" y="108" width="42" height="34" rx="7" fill="rgba(224,104,104,.15)" stroke="#e06868" stroke-width="1"/>
+  <text x="477" y="130" text-anchor="middle" font-size="12" fill="#e06868" font-weight="600">Y</text>
+  <!-- W arrow from above -->
+  <rect x="364" y="70" width="72" height="28" rx="7" fill="rgba(212,176,32,.2)" stroke="#d4b020" stroke-width="1.5"/>
+  <text x="400" y="82" text-anchor="middle" font-size="11" fill="#d4b020" font-weight="700">MODERATOR</text>
+  <text x="400" y="94" text-anchor="middle" font-size="9.5" fill="#c9a96e">(W)</text>
+  <line x1="400" y1="98" x2="400" y2="118" stroke="#d4b020" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="400" y="116" text-anchor="middle" font-size="18" fill="#d4b020">↓</text>
+  <!-- Arrow thickness metaphor -->
+  <text x="390" y="165" text-anchor="middle" font-size="11" fill="#8a8070">Effect size changes:</text>
+  <line x1="284" y1="188" x2="496" y2="188" stroke="#6dbe6d" stroke-width="5"/>
+  <text x="286" y="200" text-anchor="start" font-size="9.5" fill="#6dbe6d">W=high motivation</text>
+  <line x1="284" y1="216" x2="496" y2="216" stroke="#6dbe6d" stroke-width="1.5"/>
+  <text x="286" y="228" text-anchor="start" font-size="9.5" fill="#6dbe6d">W=low motivation</text>
+  <text x="390" y="250" text-anchor="middle" font-size="10.5" fill="#8a8070">Exam language:</text>
+  <text x="390" y="266" text-anchor="middle" font-size="10.5" fill="#ede6d8">"Motivation MODERATES</text>
+  <text x="390" y="280" text-anchor="middle" font-size="10.5" fill="#ede6d8">the effect of study time</text>
+  <text x="390" y="294" text-anchor="middle" font-size="10.5" fill="#ede6d8">on exam score"</text>
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e06868"/></marker></defs>
+</svg>`,
+points:[
+  {t:'<strong>Mediator</strong> = the WHY variable. Sits IN THE MIDDLE: X → M → Y. Explains HOW X leads to Y.'},
+  {t:'<strong>Moderator</strong> = the WHEN/FOR WHOM variable. Changes STRENGTH or DIRECTION of X → Y. Does NOT sit in the middle.'},
+  {t:'Mediator exam language: <em>"because / through / explains how / by increasing"</em>'},
+  {t:'Moderator exam language: <em>"depends on / stronger for / weaker when / interaction"</em>'},
+],mem:'M = "through/because" = sits MIDDLE. W = "depends on/when" = sits OUTSIDE, changes arrow thickness.'},
+
+{id:'L4',topic:'t4',title:'Conceptual vs Operational Definitions',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- Header -->
+  <text x="260" y="22" text-anchor="middle" font-size="12" fill="#4a4538" letter-spacing=".08em">FROM IDEA → TO MEASUREMENT</text>
+  <!-- Flow boxes -->
+  <rect x="20" y="36" width="180" height="120" rx="12" fill="rgba(201,169,110,.1)" stroke="#c9a96e" stroke-width="1.5"/>
+  <text x="110" y="62" text-anchor="middle" font-size="14" fill="#c9a96e" font-weight="700">CONCEPTUAL</text>
+  <text x="110" y="80" text-anchor="middle" font-size="11" fill="#8a8070">DEFINITION</text>
+  <text x="110" y="100" text-anchor="middle" font-size="11" fill="#8a8070">"What do we MEAN</text>
+  <text x="110" y="114" text-anchor="middle" font-size="11" fill="#8a8070">by this concept?"</text>
+  <text x="110" y="132" text-anchor="middle" font-size="11" fill="#ede6d8">Abstract · Shared meaning</text>
+  <text x="110" y="147" text-anchor="middle" font-size="11" fill="#ede6d8">Theoretical</text>
+  <text x="212" y="96" text-anchor="middle" font-size="28" fill="#c9a96e">→</text>
+  <rect x="230" y="36" width="180" height="120" rx="12" fill="rgba(109,190,109,.1)" stroke="#6dbe6d" stroke-width="1.5"/>
+  <text x="320" y="62" text-anchor="middle" font-size="14" fill="#6dbe6d" font-weight="700">OPERATIONAL</text>
+  <text x="320" y="80" text-anchor="middle" font-size="11" fill="#8a8070">DEFINITION</text>
+  <text x="320" y="100" text-anchor="middle" font-size="11" fill="#8a8070">"HOW exactly did</text>
+  <text x="320" y="114" text-anchor="middle" font-size="11" fill="#8a8070">we MEASURE it?"</text>
+  <text x="320" y="132" text-anchor="middle" font-size="11" fill="#ede6d8">Concrete · Observable</text>
+  <text x="320" y="147" text-anchor="middle" font-size="11" fill="#ede6d8">Replicable</text>
+  <!-- Examples -->
+  <text x="260" y="176" text-anchor="middle" font-size="11" fill="#4a4538" letter-spacing=".06em">EXAMPLES</text>
+  <line x1="60" y1="180" x2="460" y2="180" stroke="rgba(255,255,255,.06)"/>
+  <!-- Row 1 -->
+  <rect x="20" y="186" width="180" height="36" rx="7" fill="rgba(201,169,110,.08)" stroke="rgba(201,169,110,.2)"/>
+  <text x="110" y="203" text-anchor="middle" font-size="11.5" fill="#e8c87e">Stress = "psychological state</text>
+  <text x="110" y="216" text-anchor="middle" font-size="11.5" fill="#e8c87e">of perceived pressure"</text>
+  <text x="212" y="205" text-anchor="middle" font-size="20" fill="#6dbe6d">→</text>
+  <rect x="230" y="186" width="180" height="36" rx="7" fill="rgba(109,190,109,.08)" stroke="rgba(109,190,109,.2)"/>
+  <text x="320" y="203" text-anchor="middle" font-size="11.5" fill="#99d499">Score on 10-item stress</text>
+  <text x="320" y="216" text-anchor="middle" font-size="11.5" fill="#99d499">questionnaire</text>
+  <!-- Row 2 -->
+  <rect x="20" y="228" width="180" height="36" rx="7" fill="rgba(201,169,110,.08)" stroke="rgba(201,169,110,.2)"/>
+  <text x="110" y="245" text-anchor="middle" font-size="11.5" fill="#e8c87e">Intelligence = "ability to</text>
+  <text x="110" y="258" text-anchor="middle" font-size="11.5" fill="#e8c87e">reason &amp; learn"</text>
+  <text x="212" y="247" text-anchor="middle" font-size="20" fill="#6dbe6d">→</text>
+  <rect x="230" y="228" width="180" height="36" rx="7" fill="rgba(109,190,109,.08)" stroke="rgba(109,190,109,.2)"/>
+  <text x="320" y="245" text-anchor="middle" font-size="11.5" fill="#99d499">IQ test score</text>
+  <!-- Hypothetical Construct iceberg -->
+  <rect x="420" y="36" width="90" height="270" rx="10" fill="rgba(90,159,212,.06)" stroke="rgba(90,159,212,.2)" stroke-width="1"/>
+  <text x="465" y="56" text-anchor="middle" font-size="10" fill="#90c4ee" font-weight="600">Hypothetical</text>
+  <text x="465" y="70" text-anchor="middle" font-size="10" fill="#90c4ee" font-weight="600">Construct</text>
+  <text x="465" y="96" text-anchor="middle" font-size="22">👁</text>
+  <text x="465" y="116" text-anchor="middle" font-size="9" fill="#8a8070">Indicators</text>
+  <text x="465" y="128" text-anchor="middle" font-size="9" fill="#8a8070">(visible)</text>
+  <text x="465" y="145" text-anchor="middle" font-size="9" fill="#ede6d8">test scores</text>
+  <text x="465" y="158" text-anchor="middle" font-size="9" fill="#ede6d8">behaviours</text>
+  <line x1="430" y1="168" x2="505" y2="168" stroke="rgba(90,159,212,.4)" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="465" y="188" text-anchor="middle" font-size="22">🌊</text>
+  <text x="465" y="212" text-anchor="middle" font-size="9" fill="#5a9fd4" font-weight="600">Construct</text>
+  <text x="465" y="225" text-anchor="middle" font-size="9" fill="#5a9fd4">(hidden)</text>
+  <text x="465" y="243" text-anchor="middle" font-size="9" fill="#ede6d8">Intelligence</text>
+  <text x="465" y="256" text-anchor="middle" font-size="9" fill="#ede6d8">Motivation</text>
+  <text x="465" y="269" text-anchor="middle" font-size="9" fill="#ede6d8">Anxiety</text>
+  <text x="465" y="283" text-anchor="middle" font-size="9" fill="#ede6d8">Hunger</text>
+  <!-- Row 3 distraction -->
+  <rect x="20" y="270" width="180" height="36" rx="7" fill="rgba(201,169,110,.08)" stroke="rgba(201,169,110,.2)"/>
+  <text x="110" y="287" text-anchor="middle" font-size="11.5" fill="#e8c87e">Distraction = "reduced</text>
+  <text x="110" y="300" text-anchor="middle" font-size="11.5" fill="#e8c87e">attentional focus"</text>
+  <text x="212" y="289" text-anchor="middle" font-size="20" fill="#6dbe6d">→</text>
+  <rect x="230" y="270" width="180" height="36" rx="7" fill="rgba(109,190,109,.08)" stroke="rgba(109,190,109,.2)"/>
+  <text x="320" y="287" text-anchor="middle" font-size="11.5" fill="#99d499">Reaction time delay</text>
+  <text x="320" y="300" text-anchor="middle" font-size="11.5" fill="#99d499">while driving</text>
+</svg>`,
+points:[
+  {t:'<strong>Conceptual definition</strong> = the idea/theory behind a concept. Abstract, shared meaning.'},
+  {t:'<strong>Operational definition</strong> = exactly how we measured it. Concrete, observable, replicable.'},
+  {t:'A variable MUST have an operational definition to be used in research.'},
+  {t:'<strong>Hypothetical construct</strong> = cannot be directly observed (Motivation, Anxiety, Intelligence). You observe INDICATORS, not the construct itself.'},
+],mem:'Conceptual = "What we mean." Operational = "How we measure it."'},
+
+{id:'L5',topic:'t5',title:'Accuracy, Reliability & Validity',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- Three panels side by side -->
+  <!-- Panel 1: Accuracy -->
+  <rect x="8" y="8" width="158" height="320" rx="10" fill="rgba(224,104,104,.07)" stroke="#e06868" stroke-width="1"/>
+  <text x="87" y="30" text-anchor="middle" font-size="13" fill="#e06868" font-weight="700">ACCURACY</text>
+  <text x="87" y="46" text-anchor="middle" font-size="9.5" fill="#8a8070">Closeness to TRUE value</text>
+  <!-- Bullseye -->
+  <circle cx="87" cy="120" r="55" fill="none" stroke="#e06868" stroke-width="1" opacity=".3"/>
+  <circle cx="87" cy="120" r="38" fill="none" stroke="#e06868" stroke-width="1" opacity=".4"/>
+  <circle cx="87" cy="120" r="22" fill="none" stroke="#e06868" stroke-width="1" opacity=".6"/>
+  <circle cx="87" cy="120" r="8" fill="#e06868" opacity=".6"/>
+  <text x="87" y="122" text-anchor="middle" font-size="7" fill="white">TRUE</text>
+  <!-- Biased hits (consistently off) -->
+  <circle cx="52" cy="88" r="4" fill="#e06868" opacity=".8"/>
+  <circle cx="46" cy="96" r="4" fill="#e06868" opacity=".8"/>
+  <circle cx="55" cy="78" r="4" fill="#e06868" opacity=".8"/>
+  <circle cx="44" cy="82" r="4" fill="#e06868" opacity=".8"/>
+  <text x="87" y="192" text-anchor="middle" font-size="10" fill="#ede6d8">Systematic ERROR</text>
+  <text x="87" y="206" text-anchor="middle" font-size="10" fill="#ede6d8">(BIAS) — consistent</text>
+  <text x="87" y="222" text-anchor="middle" font-size="10" fill="#ede6d8">direction away from true</text>
+  <text x="87" y="246" text-anchor="middle" font-size="10" fill="#e06868">Example: scale always</text>
+  <text x="87" y="258" text-anchor="middle" font-size="10" fill="#e06868">reads +2 kg too heavy</text>
+  <text x="87" y="278" text-anchor="middle" font-size="9.5" fill="#8a8070">Accurate ≠ Reliable</text>
+  <text x="87" y="292" text-anchor="middle" font-size="9.5" fill="#8a8070">Reliable ≠ Accurate</text>
+  <text x="87" y="314" text-anchor="middle" font-size="9" fill="#ff9090">You can be CONSISTENTLY WRONG</text>
+  <!-- Panel 2: Reliability -->
+  <rect x="182" y="8" width="158" height="320" rx="10" fill="rgba(69,197,197,.07)" stroke="#45c5c5" stroke-width="1"/>
+  <text x="261" y="30" text-anchor="middle" font-size="13" fill="#45c5c5" font-weight="700">RELIABILITY</text>
+  <text x="261" y="46" text-anchor="middle" font-size="9.5" fill="#8a8070">CONSISTENCY of measurement</text>
+  <!-- Parallel lines / repeated arrows -->
+  <line x1="200" y1="78" x2="326" y2="78" stroke="#45c5c5" stroke-width="2.5"/>
+  <line x1="200" y1="96" x2="326" y2="96" stroke="#45c5c5" stroke-width="2.5"/>
+  <line x1="200" y1="114" x2="326" y2="114" stroke="#45c5c5" stroke-width="2.5"/>
+  <line x1="200" y1="132" x2="326" y2="132" stroke="#45c5c5" stroke-width="2.5"/>
+  <text x="260" y="156" text-anchor="middle" font-size="10.5" fill="#ede6d8">Same result, every time</text>
+  <text x="260" y="172" text-anchor="middle" font-size="10.5" fill="#ede6d8">Same test → consistent scores</text>
+  <text x="260" y="196" text-anchor="middle" font-size="11" fill="#45c5c5">3 Types:</text>
+  <text x="260" y="214" text-anchor="middle" font-size="10" fill="#ede6d8">① Test-Retest → same time,</text>
+  <text x="260" y="226" text-anchor="middle" font-size="10" fill="#ede6d8">different occasions</text>
+  <text x="260" y="244" text-anchor="middle" font-size="10" fill="#ede6d8">② Split-Half → odd vs even</text>
+  <text x="260" y="256" text-anchor="middle" font-size="10" fill="#ede6d8">items, same test</text>
+  <text x="260" y="274" text-anchor="middle" font-size="10" fill="#ede6d8">③ Interobserver → two</text>
+  <text x="260" y="286" text-anchor="middle" font-size="10" fill="#ede6d8">raters agree on same</text>
+  <text x="260" y="298" text-anchor="middle" font-size="10" fill="#ede6d8">phenomenon</text>
+  <text x="260" y="318" text-anchor="middle" font-size="9" fill="#8a8070">Concerns CONSISTENCY, not accuracy</text>
+  <!-- Panel 3: Validity -->
+  <rect x="356" y="8" width="158" height="320" rx="10" fill="rgba(212,128,184,.07)" stroke="#d480b8" stroke-width="1"/>
+  <text x="435" y="30" text-anchor="middle" font-size="13" fill="#d480b8" font-weight="700">VALIDITY</text>
+  <text x="435" y="46" text-anchor="middle" font-size="9.5" fill="#8a8070">Measuring what you INTEND</text>
+  <!-- Venn overlap -->
+  <circle cx="418" cy="110" r="40" fill="rgba(212,128,184,.15)" stroke="#d480b8" stroke-width="1" opacity=".8"/>
+  <text x="406" y="104" text-anchor="middle" font-size="9" fill="#d480b8">WHAT</text>
+  <text x="406" y="116" text-anchor="middle" font-size="9" fill="#d480b8">YOU</text>
+  <text x="406" y="128" text-anchor="middle" font-size="9" fill="#d480b8">MEASURE</text>
+  <circle cx="452" cy="110" r="40" fill="rgba(109,190,109,.15)" stroke="#6dbe6d" stroke-width="1" opacity=".8"/>
+  <text x="464" y="104" text-anchor="middle" font-size="9" fill="#6dbe6d">WHAT</text>
+  <text x="464" y="116" text-anchor="middle" font-size="9" fill="#6dbe6d">YOU</text>
+  <text x="464" y="128" text-anchor="middle" font-size="9" fill="#6dbe6d">INTEND</text>
+  <text x="435" y="112" text-anchor="middle" font-size="10" fill="white" font-weight="600">✓</text>
+  <text x="435" y="168" text-anchor="middle" font-size="10.5" fill="#ede6d8">4 Types (staircase):</text>
+  <text x="435" y="186" text-anchor="middle" font-size="10" fill="#ede6d8">① Face → looks valid?</text>
+  <text x="435" y="202" text-anchor="middle" font-size="10" fill="#ede6d8">② Content → covers domain?</text>
+  <text x="435" y="218" text-anchor="middle" font-size="10" fill="#ede6d8">③ Criterion → predicts/</text>
+  <text x="435" y="230" text-anchor="middle" font-size="10" fill="#ede6d8">correlates with criterion?</text>
+  <text x="435" y="246" text-anchor="middle" font-size="10" fill="#ede6d8">④ Construct → theory</text>
+  <text x="435" y="258" text-anchor="middle" font-size="10" fill="#ede6d8">predicts correctly?</text>
+  <text x="435" y="278" text-anchor="middle" font-size="9.5" fill="#d480b8">Most comprehensive = Construct</text>
+  <text x="435" y="298" text-anchor="middle" font-size="9.5" fill="#ff9090">A test can be reliable</text>
+  <text x="435" y="310" text-anchor="middle" font-size="9.5" fill="#ff9090">but NOT valid!</text>
+</svg>`,
+points:[
+  {t:'<strong>Accuracy</strong> = closeness to true value. Affected by BIAS (systematic error). Reliable ≠ Accurate.'},
+  {t:'<strong>Reliability</strong> = consistency/repeatability. Low random error. Concerns CONSISTENCY, not validity.'},
+  {t:'<strong>Validity</strong> = measuring what you intend. Concerns meaning of scores, not consistency.'},
+  {t:'A test can be <strong>reliable but not valid</strong> (consistently measuring the wrong thing).'},
+],mem:'"You can be consistently WRONG." Reliable ≠ Accurate. Reliable ≠ Valid.',
+warn:'Reliability concerns CONSISTENCY, not accuracy or validity.'},
+
+{id:'L6',topic:'t5',title:'Validity Types — The Staircase',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <text x="260" y="20" text-anchor="middle" font-size="12" fill="#4a4538" letter-spacing=".08em">ASCENDING STAIRCASE OF VALIDITY</text>
+  <!-- Step 1 Face -->
+  <rect x="20" y="286" width="480" height="44" rx="6" fill="rgba(224,104,104,.12)" stroke="#e06868" stroke-width="1"/>
+  <text x="260" y="304" text-anchor="middle" font-size="13" fill="#e06868" font-weight="700">① FACE VALIDITY</text>
+  <text x="260" y="320" text-anchor="middle" font-size="10.5" fill="#ede6d8">"Does it LOOK like it measures the construct?" — Surface logic only · Not statistically tested</text>
+  <!-- Step 2 Content -->
+  <rect x="20" y="232" width="380" height="44" rx="6" fill="rgba(240,144,80,.12)" stroke="#f09050" stroke-width="1"/>
+  <text x="210" y="250" text-anchor="middle" font-size="13" fill="#f09050" font-weight="700">② CONTENT VALIDITY</text>
+  <text x="210" y="266" text-anchor="middle" font-size="10.5" fill="#ede6d8">"Does it COVER the entire domain?" — Expert review · Especially for achievement tests</text>
+  <!-- Step 3 Criterion -->
+  <rect x="20" y="178" width="280" height="44" rx="6" fill="rgba(212,176,32,.12)" stroke="#d4b020" stroke-width="1"/>
+  <text x="160" y="194" text-anchor="middle" font-size="12" fill="#d4b020" font-weight="700">③ CRITERION VALIDITY</text>
+  <text x="160" y="210" text-anchor="middle" font-size="10" fill="#ede6d8">Predictive (future criterion) · Concurrent (same-time criterion)</text>
+  <!-- Step 4 Construct -->
+  <rect x="20" y="30" width="180" height="138" rx="8" fill="rgba(212,128,184,.15)" stroke="#d480b8" stroke-width="1.5"/>
+  <text x="110" y="58" text-anchor="middle" font-size="13" fill="#d480b8" font-weight="700">④ CONSTRUCT</text>
+  <text x="110" y="74" text-anchor="middle" font-size="12" fill="#d480b8" font-weight="700">VALIDITY</text>
+  <text x="110" y="92" text-anchor="middle" font-size="10" fill="#ede6d8">Most comprehensive</text>
+  <text x="110" y="108" text-anchor="middle" font-size="10.5" fill="#ede6d8">Convergent validity:</text>
+  <text x="110" y="122" text-anchor="middle" font-size="10" fill="#6dbe6d">↑ correlates with SIMILAR</text>
+  <text x="110" y="138" text-anchor="middle" font-size="10.5" fill="#ede6d8">Discriminant validity:</text>
+  <text x="110" y="153" text-anchor="middle" font-size="10" fill="#e06868">↓ does NOT correlate</text>
+  <text x="110" y="165" text-anchor="middle" font-size="10" fill="#e06868">with DIFFERENT constructs</text>
+  <!-- Timing comparison Criterion -->
+  <rect x="218" y="30" width="140" height="138" rx="8" fill="rgba(212,176,32,.1)" stroke="rgba(212,176,32,.3)" stroke-width="1"/>
+  <text x="288" y="55" text-anchor="middle" font-size="11" fill="#d4b020" font-weight="600">Criterion subtypes:</text>
+  <text x="288" y="78" text-anchor="middle" font-size="22">📅</text>
+  <text x="288" y="102" text-anchor="middle" font-size="11" fill="#ede6d8">Predictive:</text>
+  <text x="288" y="116" text-anchor="middle" font-size="10" fill="#8a8070">criterion at LATER time</text>
+  <text x="288" y="130" text-anchor="middle" font-size="10" fill="#ede6d8">e.g. grades → college</text>
+  <text x="288" y="148" text-anchor="middle" font-size="11" fill="#ede6d8">Concurrent:</text>
+  <text x="288" y="162" text-anchor="middle" font-size="10" fill="#8a8070">criterion at SAME time</text>
+  <!-- Staircase steps drawn as triangles to left -->
+  <line x1="500" y1="286" x2="500" y2="30" stroke="rgba(212,128,184,.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="500" y="260" text-anchor="middle" font-size="10" fill="#d480b8" transform="rotate(-90,500,260)">Rigor increases →</text>
+</svg>`,
+points:[
+  {t:'<strong>Face</strong> = "Does it LOOK valid?" Surface logic, subjective. Does NOT guarantee validity.'},
+  {t:'<strong>Content</strong> = "Does it COVER the whole domain?" Expert review. Critical for achievement tests.'},
+  {t:'<strong>Criterion</strong> = correlates with a criterion. Predictive (LATER time). Concurrent (SAME time).'},
+  {t:'<strong>Construct</strong> = MOST COMPREHENSIVE. Convergent (high r with similar measures ✓) + Discriminant (low r with unrelated measures ✓).'},
+],mem:'Staircase goes UP: Face → Content → Criterion → Construct. Construct is highest/most rigorous.'},
+
+{id:'L7',topic:'t6',title:'Graphical Displays & SOCS',
+layout:'top',
+svg:`<svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- SOCS boxes -->
+  <text x="350" y="18" text-anchor="middle" font-size="12" fill="#4a4538" letter-spacing=".1em">SOCS — ALWAYS DESCRIBE DISTRIBUTIONS WITH THESE 4 THINGS</text>
+  <rect x="10" y="26" width="158" height="68" rx="8" fill="rgba(240,144,80,.12)" stroke="#f09050" stroke-width="1.5"/>
+  <text x="89" y="48" text-anchor="middle" font-size="32" fill="#f09050" font-weight="800" opacity=".7">S</text>
+  <text x="89" y="66" text-anchor="middle" font-size="12" fill="#f09050" font-weight="700">SHAPE</text>
+  <text x="89" y="82" text-anchor="middle" font-size="10" fill="#8a8070">symmetric? skewed? peaks?</text>
+  <rect x="178" y="26" width="158" height="68" rx="8" fill="rgba(224,104,104,.12)" stroke="#e06868" stroke-width="1.5"/>
+  <text x="257" y="48" text-anchor="middle" font-size="32" fill="#e06868" font-weight="800" opacity=".7">O</text>
+  <text x="257" y="66" text-anchor="middle" font-size="12" fill="#e06868" font-weight="700">OUTLIERS</text>
+  <text x="257" y="82" text-anchor="middle" font-size="10" fill="#8a8070">unusual individual values?</text>
+  <rect x="346" y="26" width="158" height="68" rx="8" fill="rgba(69,197,197,.12)" stroke="#45c5c5" stroke-width="1.5"/>
+  <text x="425" y="48" text-anchor="middle" font-size="32" fill="#45c5c5" font-weight="800" opacity=".7">C</text>
+  <text x="425" y="66" text-anchor="middle" font-size="12" fill="#45c5c5" font-weight="700">CENTER</text>
+  <text x="425" y="82" text-anchor="middle" font-size="10" fill="#8a8070">mean / median / mode</text>
+  <rect x="514" y="26" width="178" height="68" rx="8" fill="rgba(139,127,212,.12)" stroke="#8b7fd4" stroke-width="1.5"/>
+  <text x="603" y="48" text-anchor="middle" font-size="32" fill="#8b7fd4" font-weight="800" opacity=".7">S</text>
+  <text x="603" y="66" text-anchor="middle" font-size="12" fill="#8b7fd4" font-weight="700">SPREAD</text>
+  <text x="603" y="82" text-anchor="middle" font-size="10" fill="#8a8070">range / IQR / SD</text>
+  <!-- Skewness curves -->
+  <text x="120" y="116" text-anchor="middle" font-size="10" fill="#4a4538" letter-spacing=".06em">LEFT SKEWED (Negative)</text>
+  <text x="350" y="116" text-anchor="middle" font-size="10" fill="#4a4538" letter-spacing=".06em">SYMMETRIC</text>
+  <text x="580" y="116" text-anchor="middle" font-size="10" fill="#4a4538" letter-spacing=".06em">RIGHT SKEWED (Positive)</text>
+  <!-- Left skewed -->
+  <path d="M30,190 Q46,190 62,168 Q76,150 92,132 Q108,115 118,118 Q130,120 136,130 Q148,150 158,168 Q168,182 200,190" fill="none" stroke="#e06868" stroke-width="2"/>
+  <line x1="30" y1="192" x2="200" y2="192" stroke="#3a3730" stroke-width="1"/>
+  <line x1="88" y1="116" x2="88" y2="192" stroke="#45c5c5" stroke-width="1" stroke-dasharray="3,2" opacity=".7"/>
+  <line x1="104" y1="120" x2="104" y2="192" stroke="#f09050" stroke-width="1" stroke-dasharray="3,2" opacity=".7"/>
+  <line x1="120" y1="115" x2="120" y2="192" stroke="#8b7fd4" stroke-width="1" stroke-dasharray="3,2" opacity=".7"/>
+  <text x="74" y="182" text-anchor="middle" font-size="8.5" fill="#45c5c5">Mean</text>
+  <text x="104" y="170" text-anchor="middle" font-size="8.5" fill="#f09050">Med</text>
+  <text x="126" y="174" text-anchor="middle" font-size="8.5" fill="#8b7fd4">Mode</text>
+  <text x="115" y="200" text-anchor="middle" font-size="8.5" fill="#8a8070">Mean &lt; Med &lt; Mode</text>
+  <!-- Symmetric -->
+  <path d="M256,190 Q272,190 290,164 Q310,132 340,118 Q370,105 390,118 Q410,132 420,164 Q438,190 444,190" fill="none" stroke="#45c5c5" stroke-width="2"/>
+  <line x1="256" y1="192" x2="444" y2="192" stroke="#3a3730" stroke-width="1"/>
+  <line x1="350" y1="115" x2="350" y2="192" stroke="#c9a96e" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="350" y="196" text-anchor="middle" font-size="8.5" fill="#c9a96e">Mean=Med=Mode</text>
+  <!-- Right skewed -->
+  <path d="M500,190 Q510,190 520,180 Q532,164 542,148 Q552,132 562,118 Q574,112 582,118 Q594,132 608,152 Q628,172 650,186 Q668,190 690,190" fill="none" stroke="#5a9fd4" stroke-width="2"/>
+  <line x1="500" y1="192" x2="690" y2="192" stroke="#3a3730" stroke-width="1"/>
+  <line x1="574" y1="110" x2="574" y2="192" stroke="#8b7fd4" stroke-width="1" stroke-dasharray="3,2" opacity=".7"/>
+  <line x1="590" y1="120" x2="590" y2="192" stroke="#f09050" stroke-width="1" stroke-dasharray="3,2" opacity=".7"/>
+  <line x1="616" y1="140" x2="616" y2="192" stroke="#45c5c5" stroke-width="1" stroke-dasharray="3,2" opacity=".7"/>
+  <text x="560" y="182" text-anchor="middle" font-size="8.5" fill="#8b7fd4">Mode</text>
+  <text x="592" y="182" text-anchor="middle" font-size="8.5" fill="#f09050">Med</text>
+  <text x="628" y="178" text-anchor="middle" font-size="8.5" fill="#45c5c5">Mean</text>
+  <text x="595" y="200" text-anchor="middle" font-size="8.5" fill="#8a8070">Mode &lt; Med &lt; Mean</text>
+</svg>`,
+points:[
+  {t:'<strong>SOCS</strong> = Shape · Outliers · Center · Spread. Always describe distributions using ALL 4.'},
+  {t:'<strong>Histogram</strong>: bars TOUCH (numerical, continuous data). <strong>Bar Chart</strong>: bars SEPARATE (categorical data).'},
+  {t:'Left skew: long tail LEFT → Mean < Median < Mode. Right skew: long tail RIGHT → Mode < Median < Mean.'},
+  {t:'<strong>Memory hook: "Mean follows the tail."</strong> The median is resistant — stays near the bulk.'},
+  {t:'Exam rule: Symmetric → use MEAN. Skewed or outliers → use MEDIAN.'},
+],mem:'"Mean follows the tail." Skewed right = mean pulled right. Median stays put.'},
+
+{id:'L8',topic:'t6',title:'Box Plot — Anatomy & Five-Number Summary',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- Box plot anatomy -->
+  <text x="260" y="20" text-anchor="middle" font-size="12" fill="#4a4538" letter-spacing=".08em">BOX PLOT ANATOMY</text>
+  <!-- Number line -->
+  <line x1="40" y1="120" x2="480" y2="120" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+  <!-- Box -->
+  <rect x="160" y="90" width="180" height="60" rx="2" fill="rgba(69,197,197,.15)" stroke="#45c5c5" stroke-width="2"/>
+  <!-- Median line -->
+  <line x1="264" y1="88" x2="264" y2="152" stroke="#c9a96e" stroke-width="3"/>
+  <!-- Left whisker -->
+  <line x1="80" y1="120" x2="160" y2="120" stroke="#45c5c5" stroke-width="2"/>
+  <line x1="80" y1="108" x2="80" y2="132" stroke="#45c5c5" stroke-width="2"/>
+  <!-- Right whisker -->
+  <line x1="340" y1="120" x2="420" y2="120" stroke="#45c5c5" stroke-width="2"/>
+  <line x1="420" y1="108" x2="420" y2="132" stroke="#45c5c5" stroke-width="2"/>
+  <!-- Outlier -->
+  <circle cx="462" cy="120" r="5" fill="none" stroke="#e06868" stroke-width="2"/>
+  <!-- Labels -->
+  <text x="80" y="144" text-anchor="middle" font-size="11" fill="#8a8070">Min</text>
+  <text x="80" y="156" text-anchor="middle" font-size="10" fill="#ede6d8">4</text>
+  <text x="160" y="172" text-anchor="middle" font-size="11" fill="#45c5c5">Q1</text>
+  <text x="160" y="184" text-anchor="middle" font-size="10" fill="#ede6d8">8.5</text>
+  <text x="264" y="172" text-anchor="middle" font-size="11" fill="#c9a96e">Median</text>
+  <text x="264" y="184" text-anchor="middle" font-size="10" fill="#e8c87e">15</text>
+  <text x="340" y="172" text-anchor="middle" font-size="11" fill="#45c5c5">Q3</text>
+  <text x="340" y="184" text-anchor="middle" font-size="10" fill="#ede6d8">23</text>
+  <text x="420" y="144" text-anchor="middle" font-size="11" fill="#8a8070">Max</text>
+  <text x="420" y="156" text-anchor="middle" font-size="10" fill="#ede6d8">30</text>
+  <text x="462" y="144" text-anchor="middle" font-size="10" fill="#e06868">Outlier</text>
+  <!-- IQR brace -->
+  <path d="M160,76 L160,68 L340,68 L340,76" fill="none" stroke="#45c5c5" stroke-width="1.5"/>
+  <text x="250" y="64" text-anchor="middle" font-size="11" fill="#45c5c5" font-weight="600">IQR = Q3−Q1 = 14.5</text>
+  <!-- Whisker labels -->
+  <text x="120" y="100" text-anchor="middle" font-size="10" fill="#8a8070">Lower</text>
+  <text x="120" y="112" text-anchor="middle" font-size="10" fill="#8a8070">whisker</text>
+  <text x="380" y="100" text-anchor="middle" font-size="10" fill="#8a8070">Upper</text>
+  <text x="380" y="112" text-anchor="middle" font-size="10" fill="#8a8070">whisker</text>
+  <!-- Five number summary table -->
+  <text x="260" y="210" text-anchor="middle" font-size="12" fill="#c9a96e" font-weight="600">Five-Number Summary — Data: 4, 7, 10, 12, 15, 18, 21, 25, 30</text>
+  <rect x="70" y="220" width="380" height="108" rx="8" fill="rgba(0,0,0,.2)"/>
+  <!-- Table rows -->
+  <line x1="80" y1="240" x2="440" y2="240" stroke="rgba(255,255,255,.06)"/>
+  <line x1="80" y1="256" x2="440" y2="256" stroke="rgba(255,255,255,.06)"/>
+  <line x1="80" y1="272" x2="440" y2="272" stroke="rgba(255,255,255,.06)"/>
+  <line x1="80" y1="288" x2="440" y2="288" stroke="rgba(255,255,255,.06)"/>
+  <line x1="80" y1="304" x2="440" y2="304" stroke="rgba(255,255,255,.06)"/>
+  <text x="90" y="235" font-size="10.5" fill="#8a8070">Step 1: Sort data</text><text x="300" y="235" font-size="10.5" fill="#ede6d8">4, 7, 10, 12, 15, 18, 21, 25, 30 (n=9)</text>
+  <text x="90" y="252" font-size="10.5" fill="#c9a96e">Median (Q2)</text><text x="300" y="252" font-size="10.5" fill="#e8c87e">= 5th value = 15</text>
+  <text x="90" y="268" font-size="10.5" fill="#45c5c5">Q1 (lower half)</text><text x="300" y="268" font-size="10.5" fill="#ede6d8">= median of {4,7,10,12} = (7+10)/2 = 8.5</text>
+  <text x="90" y="284" font-size="10.5" fill="#45c5c5">Q3 (upper half)</text><text x="300" y="284" font-size="10.5" fill="#ede6d8">= median of {18,21,25,30} = (21+25)/2 = 23</text>
+  <text x="90" y="302" font-size="10.5" fill="#e06868">Outlier rule</text><text x="300" y="302" font-size="10.5" fill="#ede6d8">Q1−1.5×IQR=−13.25; Q3+1.5×IQR=44.75 → no outliers</text>
+  <text x="90" y="320" font-size="10.5" fill="#f09050" font-weight="600">Result</text><text x="300" y="320" font-size="10.5" fill="#ede6d8">Min=4, Q1=8.5, Med=15, Q3=23, Max=30, IQR=14.5</text>
+</svg>`,
+points:[
+  {t:'Box = middle 50% of data (IQR). Median line = middle. Whiskers = extend to min/max (or fence).'},
+  {t:'<strong>IQR = Q3 − Q1</strong>. Measures spread of the middle 50%. Resistant to outliers.'},
+  {t:'<strong>Outlier rule</strong>: Lower fence = Q1 − 1.5×IQR; Upper fence = Q3 + 1.5×IQR. Values outside = "suspected outliers."'},
+  {t:'Unequal whisker lengths → distribution is skewed. Short whisker side = more data concentrated there.'},
+],mem:'Box = IQR. Median line = Q2. Whiskers = reach toward Min/Max. Circle beyond fence = suspected outlier.'},
+
+{id:'L9',topic:'t7',title:'Mean, Median, Mode — When to Use Which',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- Three columns -->
+  <rect x="8" y="8" width="160" height="200" rx="10" fill="rgba(69,197,197,.08)" stroke="#45c5c5" stroke-width="1.5"/>
+  <text x="88" y="32" text-anchor="middle" font-size="14" fill="#45c5c5" font-weight="700">MEAN</text>
+  <text x="88" y="48" text-anchor="middle" font-size="10" fill="#8a8070">(Arithmetic Average)</text>
+  <text x="88" y="68" text-anchor="middle" font-size="22">Σx / n</text>
+  <line x1="20" y1="82" x2="156" y2="82" stroke="rgba(255,255,255,.06)"/>
+  <text x="88" y="98" text-anchor="middle" font-size="10.5" fill="#6dbe6d">✓ Uses ALL values</text>
+  <text x="88" y="113" text-anchor="middle" font-size="10.5" fill="#e06868">✗ Distorted by outliers</text>
+  <text x="88" y="134" text-anchor="middle" font-size="10" fill="#8a8070">One rich person raises</text>
+  <text x="88" y="147" text-anchor="middle" font-size="10" fill="#8a8070">average income for</text>
+  <text x="88" y="160" text-anchor="middle" font-size="10" fill="#8a8070">the whole group</text>
+  <text x="88" y="180" text-anchor="middle" font-size="10" fill="#c9a96e">Use when:</text>
+  <text x="88" y="194" text-anchor="middle" font-size="10" fill="#ede6d8">Data is symmetric</text>
+  <rect x="180" y="8" width="160" height="200" rx="10" fill="rgba(212,128,184,.08)" stroke="#d480b8" stroke-width="1.5"/>
+  <text x="260" y="32" text-anchor="middle" font-size="14" fill="#d480b8" font-weight="700">MEDIAN</text>
+  <text x="260" y="48" text-anchor="middle" font-size="10" fill="#8a8070">(Middle value)</text>
+  <text x="260" y="68" text-anchor="middle" font-size="22">50th %ile</text>
+  <line x1="192" y1="82" x2="328" y2="82" stroke="rgba(255,255,255,.06)"/>
+  <text x="260" y="98" text-anchor="middle" font-size="10.5" fill="#6dbe6d">✓ Resistant to outliers</text>
+  <text x="260" y="113" text-anchor="middle" font-size="10.5" fill="#6dbe6d">✓ Stable, stays put</text>
+  <text x="260" y="134" text-anchor="middle" font-size="10" fill="#8a8070">Bills: $30,$35,$40,</text>
+  <text x="260" y="147" text-anchor="middle" font-size="10" fill="#8a8070">$45,$150 → Median</text>
+  <text x="260" y="160" text-anchor="middle" font-size="10" fill="#d480b8">= $40 (better!)</text>
+  <text x="260" y="180" text-anchor="middle" font-size="10" fill="#c9a96e">Use when:</text>
+  <text x="260" y="194" text-anchor="middle" font-size="10" fill="#ede6d8">Skewed or outliers</text>
+  <rect x="352" y="8" width="160" height="200" rx="10" fill="rgba(139,127,212,.08)" stroke="#8b7fd4" stroke-width="1.5"/>
+  <text x="432" y="32" text-anchor="middle" font-size="14" fill="#8b7fd4" font-weight="700">MODE</text>
+  <text x="432" y="48" text-anchor="middle" font-size="10" fill="#8a8070">(Most frequent value)</text>
+  <text x="432" y="68" text-anchor="middle" font-size="22">peak</text>
+  <line x1="364" y1="82" x2="500" y2="82" stroke="rgba(255,255,255,.06)"/>
+  <text x="432" y="98" text-anchor="middle" font-size="10.5" fill="#6dbe6d">✓ Works for categories</text>
+  <text x="432" y="113" text-anchor="middle" font-size="10.5" fill="#e06868">✗ Can have multiple</text>
+  <text x="432" y="134" text-anchor="middle" font-size="10" fill="#8a8070">Most popular ice</text>
+  <text x="432" y="147" text-anchor="middle" font-size="10" fill="#8a8070">cream flavor =</text>
+  <text x="432" y="160" text-anchor="middle" font-size="10" fill="#8b7fd4">the MODE</text>
+  <text x="432" y="180" text-anchor="middle" font-size="10" fill="#c9a96e">Use when:</text>
+  <text x="432" y="194" text-anchor="middle" font-size="10" fill="#ede6d8">Categorical data</text>
+  <!-- Variance/SD section below -->
+  <line x1="8" y1="220" x2="512" y2="220" stroke="rgba(255,255,255,.06)"/>
+  <text x="260" y="238" text-anchor="middle" font-size="12" fill="#c9a96e" font-weight="600">VARIANCE &amp; STANDARD DEVIATION — Step by Step</text>
+  <rect x="8" y="246" width="248" height="84" rx="8" fill="rgba(0,0,0,.2)"/>
+  <text x="132" y="262" text-anchor="middle" font-size="10.5" fill="#45c5c5" font-weight="600">Data: 2, 4, 6, 8, 10</text>
+  <text x="14" y="278" font-size="10">Step 1: x̄ = (2+4+6+8+10)/5 = </text><text x="228" y="278" font-size="10" fill="#c9a96e" font-weight="600">6</text>
+  <text x="14" y="292" font-size="10">Step 2: deviations: −4, −2, 0, +2, +4</text>
+  <text x="14" y="306" font-size="10">Step 3: squared: 16, 4, 0, 4, 16 → sum = </text><text x="234" y="306" font-size="10" fill="#c9a96e" font-weight="600">40</text>
+  <text x="14" y="320" font-size="10">Step 4: s² = 40/(5−1) = 10 → s = √10 ≈ </text><text x="242" y="320" font-size="10" fill="#6dbe6d" font-weight="600">3.16</text>
+  <rect x="264" y="246" width="248" height="84" rx="8" fill="rgba(0,0,0,.2)"/>
+  <text x="388" y="268" text-anchor="middle" font-size="11" fill="#45c5c5" font-weight="600">Population vs Sample</text>
+  <text x="270" y="284" font-size="10" fill="#c9a96e">σ² = Σ(x−μ)² / N</text><text x="400" y="284" font-size="10" fill="#8a8070">entire population</text>
+  <text x="270" y="300" font-size="10" fill="#e8c87e">s² = Σ(x−x̄)² / (n−1)</text><text x="400" y="300" font-size="10" fill="#8a8070">sample (EXAMS!)</text>
+  <text x="270" y="316" font-size="10" fill="#6dbe6d">Divide by n−1</text><text x="350" y="316" font-size="10" fill="#ede6d8">= Bessel's Correction</text>
+  <text x="270" y="328" font-size="10" fill="#8a8070">(corrects bias when estimating population from sample)</text>
+</svg>`,
+points:[
+  {t:'<strong>Mean</strong>: uses all values. Distorted by outliers. Use when data is symmetric.'},
+  {t:'<strong>Median</strong>: middle value. Resistant to outliers. Use when data is skewed.'},
+  {t:'<strong>Variance</strong>: average squared distance from mean. Sample version divides by <strong>n−1</strong> (Bessel\'s Correction).'},
+  {t:'<strong>SD</strong> = √variance. Returns to original units. "Typical distance from the center."'},
+],mem:'"Symmetric → Mean. Skewed/outliers → Median." Bessel\'s: n−1 not n in sample variance.',
+warn:'Exam default = SAMPLE variance (n−1). Only use population (N) if the question says "entire population."'},
+
+{id:'L10',topic:'t8',title:'Linear Transformation — x_new = a + bx',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- Formula display -->
+  <rect x="120" y="10" width="280" height="48" rx="10" fill="rgba(212,176,32,.15)" stroke="#d4b020" stroke-width="1.5"/>
+  <text x="260" y="30" text-anchor="middle" font-size="13" fill="#d4b020" font-weight="600">Linear Transformation Formula:</text>
+  <text x="260" y="48" text-anchor="middle" font-size="16" fill="#e8c87e" font-weight="700">x_new = a + b × x</text>
+  <!-- Part a and Part b -->
+  <rect x="20" y="74" width="230" height="140" rx="10" fill="rgba(212,176,32,.08)" stroke="#d4b020" stroke-width="1"/>
+  <text x="135" y="96" text-anchor="middle" font-size="13" fill="#d4b020" font-weight="700">Part a — Shifts the ZERO POINT</text>
+  <text x="135" y="114" text-anchor="middle" font-size="10.5" fill="#8a8070">"Where does zero start?"</text>
+  <text x="135" y="136" text-anchor="middle" font-size="10.5" fill="#ede6d8">Example: Celsius → Fahrenheit</text>
+  <text x="135" y="152" text-anchor="middle" font-size="10.5" fill="#ede6d8">0°C ≠ 0°F (0°F = −17.8°C)</text>
+  <text x="135" y="168" text-anchor="middle" font-size="10.5" fill="#ede6d8">Need a=32 to shift the zero</text>
+  <text x="135" y="186" text-anchor="middle" font-size="10.5" fill="#c9a96e">F = 32 + 1.8 × C</text>
+  <text x="135" y="204" text-anchor="middle" font-size="9.5" fill="#e06868">Without a: 0°C would = 0°F ✗</text>
+  <rect x="270" y="74" width="230" height="140" rx="10" fill="rgba(212,176,32,.08)" stroke="#d4b020" stroke-width="1"/>
+  <text x="385" y="96" text-anchor="middle" font-size="13" fill="#d4b020" font-weight="700">Part b — Changes UNIT SIZE</text>
+  <text x="385" y="114" text-anchor="middle" font-size="10.5" fill="#8a8070">"How big is one unit?"</text>
+  <text x="385" y="136" text-anchor="middle" font-size="10.5" fill="#ede6d8">Example: m/s → km/h</text>
+  <text x="385" y="152" text-anchor="middle" font-size="10.5" fill="#ede6d8">Zero speed = zero in BOTH</text>
+  <text x="385" y="168" text-anchor="middle" font-size="10.5" fill="#ede6d8">→ no shift needed (a=0)</text>
+  <text x="385" y="186" text-anchor="middle" font-size="10.5" fill="#c9a96e">1 m/s = 3.6 km/h → b = 3.6</text>
+  <text x="385" y="204" text-anchor="middle" font-size="9.5" fill="#6dbe6d">km/h = 0 + 3.6 × m/s ✓</text>
+  <!-- Effects table -->
+  <text x="260" y="232" text-anchor="middle" font-size="11" fill="#4a4538" letter-spacing=".06em">WHAT CHANGES — WHAT DOESN'T</text>
+  <rect x="20" y="240" width="480" height="90" rx="8" fill="rgba(0,0,0,.2)"/>
+  <text x="100" y="258" text-anchor="middle" font-size="10" fill="#c9a96e">Statistic</text>
+  <text x="250" y="258" text-anchor="middle" font-size="10" fill="#c9a96e">Add constant a</text>
+  <text x="400" y="258" text-anchor="middle" font-size="10" fill="#c9a96e">Multiply by constant b</text>
+  <line x1="26" y1="264" x2="494" y2="264" stroke="rgba(255,255,255,.07)"/>
+  <text x="100" y="278" text-anchor="middle" font-size="10" fill="#ede6d8">Mean / Median</text>
+  <text x="250" y="278" text-anchor="middle" font-size="10" fill="#6dbe6d">✓ Changes (shifts by a)</text>
+  <text x="400" y="278" text-anchor="middle" font-size="10" fill="#6dbe6d">✓ Changes (× b)</text>
+  <text x="100" y="294" text-anchor="middle" font-size="10" fill="#ede6d8">Standard Deviation</text>
+  <text x="250" y="294" text-anchor="middle" font-size="10" fill="#e06868">✗ Does NOT change</text>
+  <text x="400" y="294" text-anchor="middle" font-size="10" fill="#6dbe6d">✓ Changes (× b)</text>
+  <text x="100" y="310" text-anchor="middle" font-size="10" fill="#ede6d8">Variance</text>
+  <text x="250" y="310" text-anchor="middle" font-size="10" fill="#e06868">✗ Does NOT change</text>
+  <text x="400" y="310" text-anchor="middle" font-size="10" fill="#6dbe6d">✓ Changes (× b²)</text>
+  <text x="100" y="326" text-anchor="middle" font-size="10" fill="#e8c87e" font-weight="600">SHAPE</text>
+  <text x="250" y="326" text-anchor="middle" font-size="10" fill="#e06868" font-weight="600">✗ NEVER changes</text>
+  <text x="400" y="326" text-anchor="middle" font-size="10" fill="#e06868" font-weight="600">✗ NEVER changes</text>
+</svg>`,
+points:[
+  {t:'<strong>a</strong> = shifts the ZERO POINT (where zero starts). Changes mean/median. Does NOT change SD or shape.'},
+  {t:'<strong>b</strong> = changes the UNIT SIZE (how big one unit is). Changes mean, median, SD, range. SD × b. Variance × b².'},
+  {t:'<strong>Shape NEVER changes</strong> under any linear transformation. Skewed stays skewed. Symmetric stays symmetric.'},
+  {t:'All data points move together — no one jumps ahead. Relative distances preserved.'},
+],mem:'"Shape NEVER changes under linear transformation" — this gets tested every year!'},
+
+{id:'L11',topic:'t9',title:'Normal Distribution & Empirical Rule',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- Notation -->
+  <rect x="20" y="8" width="160" height="40" rx="8" fill="rgba(212,128,184,.12)" stroke="#d480b8" stroke-width="1"/>
+  <text x="100" y="24" text-anchor="middle" font-size="12" fill="#d480b8" font-weight="700">N(μ, σ)</text>
+  <text x="100" y="40" text-anchor="middle" font-size="10" fill="#8a8070">μ = mean · σ = SD</text>
+  <rect x="190" y="8" width="310" height="40" rx="8" fill="rgba(0,0,0,.2)"/>
+  <text x="345" y="24" text-anchor="middle" font-size="11" fill="#ede6d8">Perfectly symmetric · Bell-shaped · Area = 1</text>
+  <text x="345" y="40" text-anchor="middle" font-size="10" fill="#8a8070">All normal distributions are density curves, but NOT all density curves are normal.</text>
+  <!-- Bell curve with empirical bands -->
+  <defs>
+    <clipPath id="bell3"><rect x="30" y="58" width="460" height="190"/></clipPath>
+  </defs>
+  <!-- 99.7% fill -->
+  <path d="M65,240 Q80,240 100,220 Q130,190 160,155 Q190,118 220,94 Q250,72 280,60 Q310,52 340,60 Q370,72 400,94 Q430,118 456,150 Q476,180 490,210 Q500,230 510,240 Z" fill="rgba(109,190,109,.12)" clip-path="url(#bell3)"/>
+  <!-- 95% fill -->
+  <path d="M130,240 Q150,220 170,195 Q200,155 230,112 Q255,80 280,62 Q305,48 330,62 Q355,80 380,112 Q410,155 440,195 Q458,220 478,240 Z" fill="rgba(112,174,212,.18)" clip-path="url(#bell3)"/>
+  <!-- 68% fill -->
+  <path d="M212,240 Q224,220 236,198 Q252,162 268,118 Q278,84 285,66 Q300,56 315,66 Q328,84 340,118 Q356,162 368,200 Q378,220 390,240 Z" fill="rgba(212,128,184,.25)" clip-path="url(#bell3)"/>
+  <!-- Bell curve line -->
+  <path d="M65,240 Q100,235 130,210 Q165,175 200,140 Q230,106 260,78 Q275,62 290,57 Q302,53 315,57 Q328,62 342,78 Q358,98 386,130 Q416,168 444,200 Q474,230 510,240" fill="none" stroke="#d480b8" stroke-width="2.5"/>
+  <!-- Baseline -->
+  <line x1="30" y1="242" x2="512" y2="242" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+  <!-- Center line -->
+  <line x1="300" y1="54" x2="300" y2="242" stroke="#c9a96e" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="300" y="252" text-anchor="middle" font-size="11" fill="#c9a96e">μ</text>
+  <!-- ±1σ -->
+  <line x1="215" y1="242" x2="215" y2="200" stroke="#d480b8" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="385" y1="242" x2="385" y2="200" stroke="#d480b8" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="215" y="255" text-anchor="middle" font-size="10" fill="#d480b8">μ−σ</text>
+  <text x="385" y="255" text-anchor="middle" font-size="10" fill="#d480b8">μ+σ</text>
+  <!-- ±2σ -->
+  <line x1="130" y1="242" x2="130" y2="226" stroke="#70aed4" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="470" y1="242" x2="470" y2="226" stroke="#70aed4" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="130" y="255" text-anchor="middle" font-size="10" fill="#70aed4">μ−2σ</text>
+  <text x="470" y="255" text-anchor="middle" font-size="10" fill="#70aed4">μ+2σ</text>
+  <!-- ±3σ -->
+  <text x="65" y="255" text-anchor="middle" font-size="9" fill="#6dbe6d">μ−3σ</text>
+  <text x="510" y="255" text-anchor="middle" font-size="9" fill="#6dbe6d">μ+3σ</text>
+  <!-- Labels -->
+  <text x="300" y="155" text-anchor="middle" font-size="13" fill="#d480b8" font-weight="700">68%</text>
+  <text x="300" y="175" text-anchor="middle" font-size="10" fill="#d480b8">within ±1σ</text>
+  <text x="300" y="196" text-anchor="middle" font-size="12" fill="#70aed4" font-weight="700">95%</text>
+  <text x="300" y="209" text-anchor="middle" font-size="10" fill="#70aed4">within ±2σ</text>
+  <text x="300" y="224" text-anchor="middle" font-size="11" fill="#6dbe6d" font-weight="700">99.7%</text>
+  <text x="300" y="236" text-anchor="middle" font-size="9" fill="#6dbe6d">within ±3σ</text>
+  <!-- Percentages per slice -->
+  <text x="257" y="120" text-anchor="middle" font-size="9.5" fill="#ede6d8">34.1%</text>
+  <text x="343" y="120" text-anchor="middle" font-size="9.5" fill="#ede6d8">34.1%</text>
+  <text x="172" y="184" text-anchor="middle" font-size="8.5" fill="#70aed4">13.6%</text>
+  <text x="428" y="184" text-anchor="middle" font-size="8.5" fill="#70aed4">13.6%</text>
+  <text x="96" y="224" text-anchor="middle" font-size="8" fill="#6dbe6d">2.1%</text>
+  <text x="504" y="224" text-anchor="middle" font-size="8" fill="#6dbe6d">2.1%</text>
+</svg>`,
+points:[
+  {t:'<strong>Normal distribution</strong> = perfectly symmetric bell curve. Notation: N(μ, σ). Area under curve = 1.'},
+  {t:'<strong>Empirical Rule:</strong> 68% within ±1σ · 95% within ±2σ · 99.7% within ±3σ.'},
+  {t:'<strong>Density curve</strong>: smooth curve approximating histogram. Area to LEFT of x = cumulative proportion.'},
+  {t:'Mean = balance point. Median = equal-area point. In symmetric: Mean = Median = Mode.'},
+],mem:'68-95-99.7. "Area = proportion." Density curve area to LEFT = P(X ≤ x).'},
+
+{id:'L12',topic:'t10',title:'Z-Scores & Standard Normal Distribution',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <!-- Formula -->
+  <rect x="120" y="8" width="280" height="42" rx="10" fill="rgba(112,174,212,.15)" stroke="#70aed4" stroke-width="1.5"/>
+  <text x="260" y="24" text-anchor="middle" font-size="12" fill="#70aed4">Z-Score Formula</text>
+  <text x="260" y="42" text-anchor="middle" font-size="17" fill="#e8e0d0" font-weight="700">z = (x − μ) / σ</text>
+  <!-- Formula breakdown boxes -->
+  <rect x="30" y="62" width="100" height="46" rx="7" fill="rgba(112,174,212,.1)" stroke="#70aed4" stroke-width="1"/>
+  <text x="80" y="80" text-anchor="middle" font-size="13" fill="#70aed4" font-weight="700">x</text>
+  <text x="80" y="100" text-anchor="middle" font-size="9.5" fill="#8a8070">observed value</text>
+  <text x="145" y="85" text-anchor="middle" font-size="20" fill="#c9a96e">−</text>
+  <rect x="165" y="62" width="100" height="46" rx="7" fill="rgba(212,128,184,.1)" stroke="#d480b8" stroke-width="1"/>
+  <text x="215" y="80" text-anchor="middle" font-size="13" fill="#d480b8" font-weight="700">μ</text>
+  <text x="215" y="100" text-anchor="middle" font-size="9.5" fill="#8a8070">mean of distribution</text>
+  <text x="280" y="85" text-anchor="middle" font-size="20" fill="#c9a96e">÷</text>
+  <rect x="300" y="62" width="100" height="46" rx="7" fill="rgba(109,190,109,.1)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="350" y="80" text-anchor="middle" font-size="13" fill="#6dbe6d" font-weight="700">σ</text>
+  <text x="350" y="100" text-anchor="middle" font-size="9.5" fill="#8a8070">standard deviation</text>
+  <text x="416" y="85" text-anchor="middle" font-size="20" fill="#c9a96e">=</text>
+  <rect x="432" y="62" width="78" height="46" rx="7" fill="rgba(201,169,110,.15)" stroke="#c9a96e" stroke-width="1"/>
+  <text x="471" y="80" text-anchor="middle" font-size="13" fill="#c9a96e" font-weight="700">z</text>
+  <text x="471" y="98" text-anchor="middle" font-size="9" fill="#8a8070">SDs from mean</text>
+  <!-- Z number line -->
+  <line x1="30" y1="148" x2="490" y2="148" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+  <text x="30" y="165" text-anchor="middle" font-size="10" fill="#8a8070">−3</text>
+  <text x="108" y="165" text-anchor="middle" font-size="10" fill="#e06868">−2</text>
+  <text x="186" y="165" text-anchor="middle" font-size="10" fill="#f09050">−1</text>
+  <text x="260" y="165" text-anchor="middle" font-size="11" fill="#c9a96e" font-weight="600">0</text>
+  <text x="334" y="165" text-anchor="middle" font-size="10" fill="#6dbe6d">+1</text>
+  <text x="412" y="165" text-anchor="middle" font-size="10" fill="#6dbe6d">+2</text>
+  <text x="490" y="165" text-anchor="middle" font-size="10" fill="#8a8070">+3</text>
+  <!-- Tick marks -->
+  <line x1="30" y1="143" x2="30" y2="153" stroke="#8a8070" stroke-width="1"/>
+  <line x1="108" y1="143" x2="108" y2="153" stroke="#e06868" stroke-width="1"/>
+  <line x1="186" y1="143" x2="186" y2="153" stroke="#f09050" stroke-width="1"/>
+  <line x1="260" y1="140" x2="260" y2="156" stroke="#c9a96e" stroke-width="2"/>
+  <line x1="334" y1="143" x2="334" y2="153" stroke="#6dbe6d" stroke-width="1"/>
+  <line x1="412" y1="143" x2="412" y2="153" stroke="#6dbe6d" stroke-width="1"/>
+  <line x1="490" y1="143" x2="490" y2="153" stroke="#8a8070" stroke-width="1"/>
+  <!-- Alex, Sam, Jamie markers -->
+  <circle cx="412" cy="148" r="6" fill="#6dbe6d"/>
+  <text x="412" y="132" text-anchor="middle" font-size="10" fill="#6dbe6d">Alex (height)</text>
+  <text x="412" y="122" text-anchor="middle" font-size="9" fill="#6dbe6d">z = +2</text>
+  <circle cx="260" cy="148" r="6" fill="#c9a96e"/>
+  <text x="260" y="128" text-anchor="middle" font-size="10" fill="#c9a96e">Sam (weight)</text>
+  <text x="260" y="118" text-anchor="middle" font-size="9" fill="#c9a96e">z = 0 (average)</text>
+  <circle cx="412" cy="148" r="11" fill="none" stroke="#d480b8" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="454" y="136" text-anchor="start" font-size="9" fill="#d480b8">Jamie (exam)</text>
+  <text x="454" y="148" text-anchor="start" font-size="9" fill="#d480b8">z = +2</text>
+  <!-- Worked example table -->
+  <rect x="20" y="182" width="480" height="148" rx="8" fill="rgba(0,0,0,.2)"/>
+  <text x="260" y="200" text-anchor="middle" font-size="11" fill="#c9a96e" font-weight="600">z-scores put everyone on the SAME RULER</text>
+  <text x="100" y="216" text-anchor="middle" font-size="10" fill="#8a8070">Person</text>
+  <text x="216" y="216" text-anchor="middle" font-size="10" fill="#8a8070">Raw Score</text>
+  <text x="320" y="216" text-anchor="middle" font-size="10" fill="#8a8070">Mean (μ)</text>
+  <text x="410" y="216" text-anchor="middle" font-size="10" fill="#8a8070">SD (σ)</text>
+  <text x="482" y="216" text-anchor="middle" font-size="10" fill="#8a8070">z</text>
+  <line x1="26" y1="221" x2="494" y2="221" stroke="rgba(255,255,255,.07)"/>
+  <text x="100" y="237" text-anchor="middle" font-size="10" fill="#6dbe6d">Alex (height)</text>
+  <text x="216" y="237" text-anchor="middle" font-size="10" fill="#ede6d8">180 cm</text>
+  <text x="320" y="237" text-anchor="middle" font-size="10" fill="#ede6d8">170 cm</text>
+  <text x="410" y="237" text-anchor="middle" font-size="10" fill="#ede6d8">5 cm</text>
+  <text x="482" y="237" text-anchor="middle" font-size="11" fill="#6dbe6d" font-weight="700">+2</text>
+  <line x1="26" y1="243" x2="494" y2="243" stroke="rgba(255,255,255,.05)"/>
+  <text x="100" y="259" text-anchor="middle" font-size="10" fill="#c9a96e">Sam (weight)</text>
+  <text x="216" y="259" text-anchor="middle" font-size="10" fill="#ede6d8">70 kg</text>
+  <text x="320" y="259" text-anchor="middle" font-size="10" fill="#ede6d8">70 kg</text>
+  <text x="410" y="259" text-anchor="middle" font-size="10" fill="#ede6d8">10 kg</text>
+  <text x="482" y="259" text-anchor="middle" font-size="11" fill="#c9a96e" font-weight="700">0</text>
+  <line x1="26" y1="265" x2="494" y2="265" stroke="rgba(255,255,255,.05)"/>
+  <text x="100" y="281" text-anchor="middle" font-size="10" fill="#d480b8">Jamie (exam)</text>
+  <text x="216" y="281" text-anchor="middle" font-size="10" fill="#ede6d8">85 pts</text>
+  <text x="320" y="281" text-anchor="middle" font-size="10" fill="#ede6d8">75 pts</text>
+  <text x="410" y="281" text-anchor="middle" font-size="10" fill="#ede6d8">5 pts</text>
+  <text x="482" y="281" text-anchor="middle" font-size="11" fill="#d480b8" font-weight="700">+2</text>
+  <text x="260" y="306" text-anchor="middle" font-size="11" fill="#6dbe6d">✓ Alex and Jamie are EQUALLY outstanding despite different units!</text>
+  <text x="260" y="322" text-anchor="middle" font-size="10" fill="#8a8070">Standard Normal: N(0,1) — mean=0, SD=1. P(X&gt;x) = 1 − P(X≤x)</text>
+</svg>`,
+points:[
+  {t:'z = (x − μ) / σ. SIGN = direction (above/below mean). SIZE = unusualness.'},
+  {t:'z = 0 → exactly at mean. z = +2 → 2 SDs above mean. z = −1 → 1 SD below.'},
+  {t:'Z-scores put different variables on the SAME ruler. Alex (height z=+2) = Jamie (exam z=+2) = equally outstanding.'},
+  {t:'Standard Normal = N(0,1). Cumulative tables give P(X ≤ x) = area to LEFT. P(X > x) = 1 − P(X ≤ x).'},
+],mem:'"Size tells unusualness. Sign tells direction." Most z-scores fall between −3 and +3.'},
+
+{id:'L13',topic:'t11',title:'Q-Q Plot & Frequency Terms',
+layout:'left',
+svg:`<svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans,sans-serif">
+  <text x="260" y="18" text-anchor="middle" font-size="12" fill="#4a4538" letter-spacing=".08em">NORMAL QUANTILE PLOT (Q-Q) — Assessing Normality</text>
+  <!-- Normal QQ plot -->
+  <rect x="20" y="26" width="220" height="200" rx="10" fill="rgba(109,190,109,.07)" stroke="#6dbe6d" stroke-width="1"/>
+  <text x="130" y="46" text-anchor="middle" font-size="12" fill="#6dbe6d" font-weight="700">Normal Distribution</text>
+  <text x="130" y="60" text-anchor="middle" font-size="10" fill="#8a8070">Points follow the line ✓</text>
+  <!-- axes -->
+  <line x1="40" y1="210" x2="220" y2="210" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+  <line x1="40" y1="210" x2="40" y2="70" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+  <text x="130" y="224" text-anchor="middle" font-size="9" fill="#8a8070">Theoretical quantiles</text>
+  <text x="28" y="140" text-anchor="middle" font-size="9" fill="#8a8070" transform="rotate(-90,28,140)">Data quantiles</text>
+  <!-- reference line -->
+  <line x1="50" y1="200" x2="210" y2="78" stroke="#8a8070" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- points on line -->
+  <circle cx="66" cy="193" r="4" fill="#6dbe6d" opacity=".9"/>
+  <circle cx="88" cy="173" r="4" fill="#6dbe6d" opacity=".9"/>
+  <circle cx="110" cy="154" r="4" fill="#6dbe6d" opacity=".9"/>
+  <circle cx="132" cy="136" r="4" fill="#6dbe6d" opacity=".9"/>
+  <circle cx="154" cy="116" r="4" fill="#6dbe6d" opacity=".9"/>
+  <circle cx="176" cy="97" r="4" fill="#6dbe6d" opacity=".9"/>
+  <circle cx="198" cy="84" r="4" fill="#6dbe6d" opacity=".9"/>
+  <!-- Non-Normal QQ plot -->
+  <rect x="260" y="26" width="240" height="200" rx="10" fill="rgba(224,104,104,.07)" stroke="#e06868" stroke-width="1"/>
+  <text x="380" y="46" text-anchor="middle" font-size="12" fill="#e06868" font-weight="700">Non-Normal (Skewed)</text>
+  <text x="380" y="60" text-anchor="middle" font-size="10" fill="#8a8070">Points curve away ✗</text>
+  <line x1="278" y1="210" x2="488" y2="210" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+  <line x1="278" y1="210" x2="278" y2="70" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+  <text x="383" y="224" text-anchor="middle" font-size="9" fill="#8a8070">Theoretical quantiles</text>
+  <!-- reference line -->
+  <line x1="288" y1="200" x2="478" y2="78" stroke="#8a8070" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- curved points -->
+  <circle cx="296" cy="205" r="4" fill="#e06868" opacity=".9"/>
+  <circle cx="318" cy="200" r="4" fill="#e06868" opacity=".9"/>
+  <circle cx="342" cy="190" r="4" fill="#e06868" opacity=".9"/>
+  <circle cx="368" cy="170" r="4" fill="#e06868" opacity=".9"/>
+  <circle cx="394" cy="142" r="4" fill="#e06868" opacity=".9"/>
+  <circle cx="430" cy="104" r="4" fill="#e06868" opacity=".9"/>
+  <circle cx="468" cy="76" r="4" fill="#e06868" opacity=".9"/>
+  <!-- Deviation labels -->
+  <text x="380" y="166" text-anchor="middle" font-size="9" fill="#e06868">S-curve or</text>
+  <text x="380" y="178" text-anchor="middle" font-size="9" fill="#e06868">heavy tail →</text>
+  <text x="380" y="190" text-anchor="middle" font-size="9" fill="#e06868">not normal</text>
+  <!-- Frequency terms table -->
+  <rect x="20" y="240" width="480" height="94" rx="8" fill="rgba(0,0,0,.2)"/>
+  <text x="260" y="258" text-anchor="middle" font-size="11" fill="#a882d4" font-weight="600">FREQUENCY TERMS</text>
+  <text x="60" y="274" text-anchor="middle" font-size="10" fill="#c9a96e">Term</text>
+  <text x="310" y="274" text-anchor="middle" font-size="10" fill="#c9a96e">Definition</text>
+  <line x1="26" y1="278" x2="494" y2="278" stroke="rgba(255,255,255,.07)"/>
+  <text x="60" y="291" text-anchor="middle" font-size="10" fill="#ede6d8">Frequency</text>
+  <text x="310" y="291" text-anchor="middle" font-size="10" fill="#8a8070">How often a value occurs</text>
+  <text x="60" y="305" text-anchor="middle" font-size="10" fill="#ede6d8">Cumulative Frequency</text>
+  <text x="310" y="305" text-anchor="middle" font-size="10" fill="#8a8070">Running total of frequencies</text>
+  <text x="60" y="319" text-anchor="middle" font-size="10" fill="#ede6d8">Frequency Percentage</text>
+  <text x="310" y="319" text-anchor="middle" font-size="10" fill="#8a8070">(freq / total n) × 100</text>
+  <text x="60" y="329" text-anchor="middle" font-size="10" fill="#ede6d8">Cumulative Freq %</text>
+  <text x="310" y="329" text-anchor="middle" font-size="10" fill="#8a8070">Running total of % = Percentile Rank</text>
+</svg>`,
+points:[
+  {t:'<strong>Q-Q Plot</strong>: compares observed data to expected values from a normal distribution.'},
+  {t:'Points close to the reference line → approximately normal ✓. S-curve or systematic bend → NOT normal ✗.'},
+  {t:'Curved shape = skewed. S-shape = tails too heavy or too light. Random scatter = fine.'},
+  {t:'<strong>Cumulative Frequency %</strong> = Percentile Rank. Tells you what % of data scored AT or BELOW a value.'},
+],mem:'"Outliers refuse to stand in line." The Q-Q reference line shows where normal data SHOULD be.'},
+];
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FLASHCARDS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const FC=[
+{t:'t1',q:'What 5 questions does statistics always ask?',a:'(1) What kind of data? (2) How spread out? (3) Where is the middle? (4) Any strange values? (5) Does it look normal? → All ask: "What do my data look like?"'},
+{t:'t1',q:'EDA vs Predictive Analysis — what is the key difference?',a:'EDA = Exploratory Data Analysis → uses graphs & summaries to DISCOVER patterns (understand data). Predictive = uses models (regression) to FORECAST outcomes.'},
+{t:'t2',q:'Memory trick: when is a variable categorical?',a:'"If I cannot calculate a meaningful average, it is categorical." You COUNT categories, you do not calculate averages. Examples: blood type, gender, nationality.'},
+{t:'t2',q:'Nominal vs Ordinal: what is the key difference?',a:'Nominal = categories with NO order (blood type: A, B, AB, O — cannot rank). Ordinal = categories WITH order, but UNEQUAL gaps (pain: mild < moderate < severe — but the gap between mild and moderate ≠ the gap between moderate and severe).'},
+{t:'t2',q:'Why is temperature (°C) interval and NOT ratio?',a:'0°C does NOT mean "no temperature" — it is an arbitrary zero point. You CANNOT say 20°C is twice as hot as 10°C. Ratio requires a TRUE zero (absence of the quantity).'},
+{t:'t2',q:'What makes a variable discrete? Give an example.',a:'Discrete = counting → whole numbers ONLY, no decimals. "You cannot have 2.5 children." Examples: number of children, goals scored in a match, students in a class.'},
+{t:'t3',q:'IV and DV — which axis? Which question to ask?',a:'IV (Independent/Explanatory) → X-axis. Ask: "What do we think CAUSES change?" DV (Dependent/Response) → Y-axis. Ask: "What CHANGES as a result?"'},
+{t:'t3',q:'Situational vs Subject variable: one key difference',a:'Situational = the environment/context the participant is placed IN (can be manipulated, assigned). Subject = pre-existing CHARACTERISTIC of the person (cannot be assigned, only measured — age, gender, nationality).'},
+{t:'t3',q:'Mediator vs Moderator: the one-sentence difference',a:'Mediator = explains WHY X affects Y (sits IN THE MIDDLE: X→M→Y). Moderator = changes HOW STRONG or IN WHAT DIRECTION X affects Y (sits OUTSIDE, modifies the X→Y relationship).'},
+{t:'t3',q:'Mediator exam language vs Moderator exam language',a:'Mediator: "because / through / explains how / by increasing." Moderator: "depends on / stronger for / weaker when / interaction."'},
+{t:'t4',q:'Conceptual vs Operational definition: what does each answer?',a:'Conceptual = "What do we MEAN by this concept?" (abstract, theoretical). Operational = "HOW exactly did we MEASURE it?" (concrete, observable, replicable). Both are needed for valid research.'},
+{t:'t4',q:'What is a hypothetical construct? Give 3 examples.',a:'A variable that CANNOT be directly observed — inferred from observable behaviour/responses. You observe INDICATORS, not the construct itself. Examples: Motivation, Anxiety, Intelligence, Hunger, Attention.'},
+{t:'t5',q:'Can a measurement be reliable but not accurate?',a:'Yes! A scale that always shows +2 kg too heavy is RELIABLE (consistent) but NOT ACCURATE (systematically wrong). Reliable ≠ Accurate. You can be consistently wrong (systematic bias).'},
+{t:'t5',q:'Name the 3 types of reliability.',a:'① Test-Retest = stability over time (same test, same people, different time points). ② Split-Half = internal consistency (odd vs even items). ③ Interobserver = agreement between raters (two+ observers, same phenomenon).'},
+{t:'t5',q:'Predictive vs Concurrent validity — timing rule',a:'Predictive = criterion measured at LATER time (grades predicting future college success). Concurrent = criterion measured at SAME time (new IQ test vs existing IQ test simultaneously).'},
+{t:'t5',q:'Convergent vs Discriminant validity: what does each require?',a:'Convergent = HIGH correlation with SIMILAR measures ✓ (new anxiety scale should correlate highly with existing anxiety scales). Discriminant = LOW correlation with UNRELATED measures ✓ (anxiety scale should NOT correlate with physical strength test).'},
+{t:'t6',q:'SOCS: what does each letter mean?',a:'S = Shape (symmetric? skewed? unimodal?). O = Outliers (unusual values?). C = Center (mean/median/mode). S = Spread (range/IQR/SD). Always describe distributions using ALL 4.'},
+{t:'t6',q:'Histogram vs Bar Chart: the crucial visual rule',a:'Histogram: bars TOUCH (continuous numerical data — no gap between bins). Bar Chart: bars are SEPARATE (categorical data — distinct groups). Touching = continuous. Separate = categorical.'},
+{t:'t6',q:'Memory hook for skewness direction',a:'"Mean follows the tail." Right skew: long tail RIGHT → Mean > Median (mean is pulled right). Left skew: long tail LEFT → Mean < Median. Median stays put — it is resistant to extreme values.'},
+{t:'t7',q:'Mean vs Median: when to use which?',a:'Mean: when data is symmetric, no outliers (uses all values, but distorted by outliers). Median: when data is skewed OR has outliers (resistant, stable). Exam rule: Symmetric → Mean. Skewed/outliers → Median.'},
+{t:'t7',q:'Why do we divide by n−1 in sample variance?',a:"Bessel's Correction. Dividing by n UNDERESTIMATES the population variance. Dividing by n−1 corrects this bias and makes the sample variance an UNBIASED estimator of the population variance."},
+{t:'t7',q:'What is IQR and why is it resistant to outliers?',a:'IQR = Q3 − Q1 = spread of the MIDDLE 50% of data. Resistant because it ignores the top and bottom 25% entirely — extreme outliers in the tails have NO effect on IQR.'},
+{t:'t7',q:'State the 1.5 × IQR outlier fences.',a:'Lower fence = Q1 − 1.5(IQR). Upper fence = Q3 + 1.5(IQR). Values OUTSIDE these fences = "suspected outliers." Use the phrase "suspected outliers" in exams.'},
+{t:'t8',q:'Linear transformation formula: what does each part do?',a:'x_new = a + bx. Part a = shifts the ZERO POINT (centre shifts by a; SD unchanged). Part b = changes the UNIT SIZE (mean, SD, range all × b; variance × b²). Shape NEVER changes.'},
+{t:'t8',q:'You add 10 to every score. What happens to Mean, SD, Shape?',a:'Mean increases by 10 (shifts). SD stays THE SAME. Shape stays THE SAME. Adding a constant moves everyone together — relative distances unchanged, spread unchanged.'},
+{t:'t8',q:'Shape under linear transformation — the exam rule',a:'Shape NEVER changes under linear transformation. Skewed stays skewed. Symmetric stays symmetric. Modality (unimodal/bimodal) stays the same. This gets tested every year!'},
+{t:'t9',q:'Normal distribution notation and parameters',a:'N(μ, σ) where μ = mean (center) and σ = standard deviation (spread). Example: N(100, 15) = normal distribution with mean 100 and SD 15. All normal distributions are perfectly symmetric.'},
+{t:'t9',q:'State the Empirical Rule (68-95-99.7)',a:'For a normal distribution: 68% within ±1σ · 95% within ±2σ · 99.7% within ±3σ. Per band from center outward: 34.1% | 34.1% | 13.6% | 13.6% | 2.1% | 2.1% | 0.1% | 0.1%.'},
+{t:'t9',q:'What does the area under a density curve to the LEFT of x represent?',a:'Cumulative proportion = P(X ≤ x). The proportion of all observations that lie AT or BELOW x. Total area = 1, so area to LEFT = proportion below. Think: "hill of sand collected so far."'},
+{t:'t10',q:'Z-score formula and what sign/size tell you',a:'z = (x − μ) / σ. SIGN = direction (positive = above mean, negative = below mean). SIZE = unusualness (z=+3 is much more unusual than z=+1). z=0 = exactly at mean.'},
+{t:'t10',q:'Why are z-scores useful for comparison across different variables?',a:'Different variables are on different scales (cm, kg, points). Z-scores standardise everything onto the SAME scale (N(0,1)), allowing fair comparison. Alex (height z=+2) = Jamie (exam z=+2) = equally outstanding.'},
+{t:'t10',q:'P(X > x) from a z-table: how to calculate?',a:'Normal tables give area to the LEFT = P(X ≤ x). For area to the RIGHT: P(X > x) = 1 − P(X ≤ x). Because total area = 1. Example: P(X ≤ z) = 0.8413 → P(X > z) = 1 − 0.8413 = 0.1587.'},
+{t:'t11',q:'What does a straight line in a Q-Q plot indicate?',a:'Points close to the straight reference line → data are approximately NORMALLY distributed ✓. Systematic S-curve or bend → NOT normal ✗. Random small noise is fine; patterned deviation is not.'},
+{t:'t11',q:'Name the 4 frequency terms.',a:'① Frequency = how often a value occurs. ② Cumulative Frequency = running total of frequencies. ③ Frequency Percentage = (freq/total) × 100. ④ Cumulative Frequency % = running total of % = Percentile Rank.'},
+];
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// MCQ
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const MCQS=[
+{top:'t2',q:'Education level (primary / high school / university) is best classified as which type of variable?',opts:['Nominal — no meaningful order','Ordinal — has meaningful order but unequal intervals','Interval — has equal intervals and true zero','Ratio — has a true zero'],cor:1,fb:'ORDINAL ✓ — There is a clear ranking (primary < high school < university) but we cannot say the gap between each level is equal. No true zero exists.'},
+{top:'t3',q:'A researcher finds that the effect of study time on exam scores is STRONGER for highly motivated students. Motivation is the:',opts:['Independent variable','Dependent variable','Mediator variable','Moderator variable'],cor:3,fb:'MODERATOR ✓ — Motivation changes the STRENGTH of the X→Y relationship. It does not sit in the middle; it modifies how strong the effect is. Exam language: "Motivation moderates the relationship between study time and exam score."'},
+{top:'t3',q:'Study time → Understanding → Exam score. Understanding is the:',opts:['Independent variable','Dependent variable','Mediator variable','Moderator variable'],cor:2,fb:'MEDIATOR ✓ — Understanding sits IN THE MIDDLE of the causal chain (Study time → Understanding → Exam score). It explains HOW/WHY study time affects exam scores.'},
+{top:'t5',q:'A scale that consistently shows +2 kg too heavy is:',opts:['Reliable and accurate','Reliable but NOT accurate','Accurate but NOT reliable','Neither reliable nor accurate'],cor:1,fb:'RELIABLE but NOT ACCURATE ✓ — It is consistent (reliable), but systematically wrong (not accurate due to bias). This is the key distinction: reliable ≠ accurate.'},
+{top:'t5',q:'Researchers validate a new IQ test by administering it alongside an existing validated IQ test on the same day. This tests:',opts:['Predictive validity','Concurrent validity','Content validity','Face validity'],cor:1,fb:'CONCURRENT VALIDITY ✓ — Comparing a new test with an established measure of the SAME construct at the SAME time. If it were at a later time, it would be predictive validity.'},
+{top:'t6',q:'In a right-skewed distribution, which ordering is correct?',opts:['Mean = Median = Mode','Mean < Median < Mode','Mode < Median < Mean','Median > Mean'],cor:2,fb:'MODE < MEDIAN < MEAN ✓ — In right skew, the mean is pulled toward the long right tail. "Mean follows the tail." The median stays closer to the bulk of the data.'},
+{top:'t7',q:'Dataset: 4, 7, 10, 12, 15, 18, 21, 25, 30. What is Q1?',opts:['7','8.5','10','15'],cor:1,fb:'Q1 = 8.5 ✓ — Median = 5th value = 15. Lower half: {4,7,10,12}. Q1 = median of lower half = (7+10)/2 = 8.5. Always exclude the median when finding Q1 and Q3.'},
+{top:'t7',q:'Which measure of spread is MOST resistant to outliers?',opts:['Range','Standard Deviation','IQR (Interquartile Range)','Variance'],cor:2,fb:'IQR ✓ — IQR = Q3−Q1 uses only the middle 50% of data. Extreme values in the top or bottom 25% have NO effect. Range and SD are both heavily affected by even a single outlier.'},
+{top:'t8',q:'You add 10 points to every student\'s score. What happens to the standard deviation?',opts:['Increases by 10','Decreases by 10','Stays the same','Is multiplied by 10'],cor:2,fb:'STAYS THE SAME ✓ — Adding constant a to all values SHIFTS the distribution but does NOT change spread. SD measures distances between points — adding 10 to everyone moves them all equally, so no distances change.'},
+{top:'t9',q:'In a normal distribution N(100, 15), what % of scores fall between 70 and 130?',opts:['68%','95%','99.7%','75%'],cor:1,fb:'95% ✓ — 70 = 100−2(15) = μ−2σ; 130 = 100+2(15) = μ+2σ. Empirical Rule: 95% of observations lie within ±2σ of the mean.'},
+{top:'t10',q:'A student scores 80 on an exam where μ=70 and σ=5. What is their z-score?',opts:['z = +1','z = +2','z = −2','z = 0.5'],cor:1,fb:'z = +2 ✓ — z = (x−μ)/σ = (80−70)/5 = 10/5 = +2. The student is 2 standard deviations ABOVE the mean.'},
+{top:'t11',q:'A Q-Q plot shows an S-shaped pattern. What does this indicate?',opts:['Data are normally distributed','Data are skewed','Distribution has tails too heavy or too light','No outliers present'],cor:2,fb:'TAILS TOO HEAVY OR LIGHT ✓ — An S-shape in a Q-Q plot indicates the distribution is leptokurtic (fat tails) or platykurtic (thin tails) compared to normal. A straight line = normal.'},
+{top:'t2',q:'Which variable type allows you to say "this group has twice as much as that group"?',opts:['Nominal','Ordinal','Interval','Ratio'],cor:3,fb:'RATIO ✓ — Only ratio variables have a TRUE ZERO (absence of quantity), so ratio statements ("twice as much") are valid. Example: 0 kg = no weight → 20 kg IS twice 10 kg. 0°C does not mean no temperature, so Celsius is interval, not ratio.'},
+{top:'t5',q:'Construct validity is the most comprehensive type of validity because:',opts:['It is easiest to assess','It evaluates whether the instrument behaves in accordance with all theoretical predictions','It requires no statistical testing','It only assesses surface appearance'],cor:1,fb:'THEORETICAL PREDICTIONS ✓ — Construct validity checks that the instrument behaves exactly as theory predicts: high correlations with similar constructs (convergent) AND low correlations with unrelated constructs (discriminant).'},
+{top:'t4',q:'Which of the following is an OPERATIONAL definition of "anxiety"?',opts:['A state of worry and unease','A feeling of nervousness and tension','Score on the Beck Anxiety Inventory (BAI)','The body\'s response to perceived threats'],cor:2,fb:'SCORE ON BAI ✓ — An operational definition specifies HOW the variable is measured/manipulated — it must be concrete, observable, and replicable. "Score on the Beck Anxiety Inventory" tells you exactly how anxiety was operationalized.'},
+];
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// STATE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let curLesson=0;
+let curFC=0;
+let fcList=[...FC];
+let fcSeen=new Set();
+let mcqAnswered={};
+let mcqScore=0;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// NAVIGATION
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function setView(v,btn){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  else document.getElementById('btn-'+v).classList.add('active');
+  const names={'overview':'Overview','lesson':'Lessons','fc':'Flashcards','mcq':'MCQ Exam'};
+  document.getElementById('tb-badge').textContent=names[v]||v;
+  document.getElementById('tb-badge').style.color=v==='lesson'? TC[LESSONS[curLesson].topic].c : 'var(--gold)';
+  document.getElementById('tb-badge').style.borderColor= v==='lesson'? TC[LESSONS[curLesson].topic].c+'60' : 'var(--gold)';
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// OVERVIEW
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderOverview(){
+  const g=document.getElementById('ov-grid');
+  g.innerHTML='';
+  LESSONS.forEach((L,i)=>{
+    const c=TC[L.topic].c;
+    const d=document.createElement('div');
+    d.className='ov-card';
+    d.style.cssText=`border-color:${c}30;`;
+    d.innerHTML=`<style>.ov-card:nth-child(${i+1})::before{background:${c};}</style>
+      <div class="ov-num" style="color:${c}">Lesson ${i+1}</div>
+      <div class="ov-title" style="color:${c}">${L.title}</div>
+      <svg class="ov-mini" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="80" fill="rgba(0,0,0,.15)" rx="6"/><text x="100" y="46" text-anchor="middle" font-size="28" opacity=".3">${getTopicEmoji(L.topic)}</text></svg>`;
+    d.onclick=()=>{ curLesson=i; setView('lesson',null); renderLesson(); };
+    g.appendChild(d);
+  });
+}
+
+function getTopicEmoji(t){const e={t1:'📊',t2:'🔢',t3:'🔬',t4:'📏',t5:'🎯',t6:'📈',t7:'📐',t8:'⚡',t9:'🔔',t10:'📉',t11:'📋'};return e[t]||'📖';}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// LESSON
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderLesson(){
+  const L=LESSONS[curLesson];
+  const c=TC[L.topic].c;
+  // Header
+  document.getElementById('l-badge').style.cssText=`background:${c}25;color:${c};`;
+  document.getElementById('l-badge').textContent=curLesson+1;
+  document.getElementById('l-title').textContent=L.title;
+  document.getElementById('l-title').style.color=c;
+  document.getElementById('l-tag').textContent=TC[L.topic].n;
+  document.getElementById('l-tag').style.color=c;
+  // Layout
+  const content=document.getElementById('l-content');
+  content.className='lesson-content '+(L.layout==='top'?'layout-top':L.layout==='full'?'layout-full':'layout-left');
+  // Diagram
+  document.getElementById('l-diagram').innerHTML=L.svg;
+  // Notes
+  const notes=document.getElementById('l-notes');
+  notes.innerHTML='';
+  L.points.forEach(p=>{
+    const bl=document.createElement('div');bl.className='note-block';
+    const dot=document.createElement('div');dot.className='note-dot';dot.style.background=c;
+    const tx=document.createElement('div');tx.className='note-text';tx.innerHTML=p.t;
+    bl.appendChild(dot);bl.appendChild(tx);notes.appendChild(bl);
+  });
+  if(L.mem){
+    const m=document.createElement('div');m.className='mem-hook';m.textContent=L.mem;notes.appendChild(m);
+  }
+  if(L.warn){
+    const w=document.createElement('div');w.className='warn-hook';w.textContent=L.warn;notes.appendChild(w);
+  }
+  // Pills
+  const pills=document.getElementById('lesson-pills');
+  pills.innerHTML='';
+  LESSONS.forEach((ll,i)=>{
+    const b=document.createElement('button');
+    b.className='lesson-pill'+(i===curLesson?' active':'');
+    b.textContent=i+1;
+    b.style.borderColor=i===curLesson?TC[ll.topic].c+'80':'';
+    b.style.color=i===curLesson?TC[ll.topic].c:'';
+    b.onclick=(()=>{const idx=i;return()=>{curLesson=idx;renderLesson();};})();
+    pills.appendChild(b);
+  });
+  // Dots
+  const dots=document.getElementById('lf-dots');
+  dots.innerHTML='';
+  LESSONS.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='lf-dot'+(i<curLesson?' done':i===curLesson?' now':'');
+    dots.appendChild(d);
+  });
+  // Badge update
+  document.getElementById('tb-badge').textContent='Lesson '+(curLesson+1)+' / '+LESSONS.length;
+  document.getElementById('tb-badge').style.color=c;
+  document.getElementById('tb-badge').style.borderColor=c+'50';
+}
+
+function moveLesson(dir){
+  curLesson=Math.max(0,Math.min(LESSONS.length-1,curLesson+dir));
+  renderLesson();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FLASHCARDS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderFC(){
+  if(!fcList.length)return;
+  const c=fcList[curFC];
+  const col=TC[c.t].c;
+  document.getElementById('fc-q').textContent=c.q;
+  document.getElementById('fc-a').textContent=c.a;
+  document.getElementById('fc-inner').classList.remove('flipped');
+  document.getElementById('fc-front').style.borderColor=col+'40';
+  document.getElementById('fc-back').style.borderColor=col+'40';
+  document.getElementById('fc-count').textContent=`${curFC+1} / ${fcList.length}`;
+  // dots
+  const dr=document.getElementById('fc-dotrow');
+  dr.innerHTML='';
+  const max=Math.min(fcList.length,30);
+  for(let i=0;i<max;i++){
+    const d=document.createElement('div');
+    d.className='fcdot'+(i===curFC?' cur':fcSeen.has(i)?' seen':'');
+    const idx=i;d.onclick=()=>{curFC=idx;renderFC();};
+    dr.appendChild(d);
+  }
+}
+function fcFlip(){document.getElementById('fc-inner').classList.toggle('flipped');fcSeen.add(curFC);renderFCDots();}
+function renderFCDots(){
+  const dr=document.getElementById('fc-dotrow');
+  if(!dr)return;
+  dr.querySelectorAll('.fcdot').forEach((d,i)=>{d.className='fcdot'+(i===curFC?' cur':fcSeen.has(i)?' seen':'');});
+}
+function fcMove(d){curFC=(curFC+d+fcList.length)%fcList.length;renderFC();}
+function fcShuffle(){for(let i=fcList.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcList[i],fcList[j]]=[fcList[j],fcList[i]];}curFC=0;fcSeen.clear();renderFC();}
+function fcReset(){fcList=[...FC];curFC=0;fcSeen.clear();renderFC();}
+function fcFilter(t){
+  document.querySelectorAll('.fc-top button').forEach(b=>{
+    if(b.getAttribute('onclick')===`fcFilter('${t}')||b.getAttribute('onclick')==="fcFilter('all')"`)b.classList.toggle('active',true);
+  });
+  fcList=t==='all'?[...FC]:FC.filter(f=>f.t===t);
+  curFC=0;fcSeen.clear();renderFC();
+  document.querySelectorAll('.fc-top button').forEach(b=>b.classList.remove('active'));
+  const tgt=t==='all'?document.getElementById('fc-btn-all'):null;
+  if(tgt)tgt.classList.add('active');
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// MCQ
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderMCQ(){
+  const g=document.getElementById('mcq-grid');
+  g.innerHTML='';
+  MCQS.forEach((q,qi)=>{
+    const col=TC[q.top].c;
+    const d=document.createElement('div');
+    d.className='mcq-card';d.id='mcq-'+qi;
+    d.style.borderColor=col+'25';
+    const opts=q.opts.map((o,oi)=>`<button class="mcq-opt" id="mop-${qi}-${oi}" onclick="mcqAnswer(${qi},${oi})">${o}</button>`).join('');
+    d.innerHTML=`<div class="mcq-tag" style="color:${col}">${getTopicEmoji(q.top)} ${TC[q.top].n}</div>
+      <div class="mcq-q">Q${qi+1}. ${q.q}</div>
+      <div class="mcq-opts">${opts}</div>
+      <div class="mcq-fb" id="mcq-fb-${qi}"></div>`;
+    g.appendChild(d);
+  });
+  updateMCQScore();
+}
+function mcqAnswer(qi,oi){
+  if(mcqAnswered[qi]!==undefined)return;
+  mcqAnswered[qi]=oi;
+  const q=MCQS[qi];
+  const ok=oi===q.cor;
+  if(ok)mcqScore++;
+  q.opts.forEach((_,i)=>{
+    const b=document.getElementById(`mop-${qi}-${i}`);
+    if(i===q.cor)b.classList.add('correct');
+    else if(i===oi&&!ok)b.classList.add('wrong');
+    b.disabled=true;
+  });
+  const fb=document.getElementById(`mcq-fb-${qi}`);
+  fb.className='mcq-fb show '+(ok?'c':'w');
+  fb.textContent=q.fb;
+  updateMCQScore();
+}
+function updateMCQScore(){
+  const n=Object.keys(mcqAnswered).length;
+  document.getElementById('mcq-big').textContent=mcqScore;
+  document.getElementById('mcq-answered').textContent=`/ ${n} answered`;
+  document.getElementById('mcq-pct').textContent=n>0?`${Math.round(mcqScore/n*100)}% correct`:'Click an answer to start';
+}
+function mcqReset(){mcqAnswered={};mcqScore=0;renderMCQ();}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// INIT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+document.addEventListener('DOMContentLoaded',()=>{
+  renderOverview();
+  renderLesson();
+  renderFC();
+  renderMCQ();
+});
+</script>
+</body>
+</html>
